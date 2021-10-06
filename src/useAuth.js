@@ -6,7 +6,7 @@ export default function useAuth(code) {
 
   useEffect(() => {
     axios
-      .post(`http://localhost:${process.env.PORT}/login`, { code })
+      .post(`${process.env.REACT_APP_REDIRECT_URI}login`, { code })
       .then((response) => {
 
         // If success then cut the code string from the URL and execute the other thing
