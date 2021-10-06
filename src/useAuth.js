@@ -9,7 +9,6 @@ export default function useAuth(code) {
     axios
       .post(`${process.env.REACT_APP_REDIRECT_URI}login`, { code })
       .then((response) => {
-        console.log(response.data.accessToken)
         // If success then cut the code string from the URL and execute the other thing
         window.history.pushState({}, null, "/");
 
