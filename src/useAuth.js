@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-require('dotenv').config()
 
 export default function useAuth(code) {
   const [accessToken, setAccessToken] = useState();
 
   useEffect(() => {
     axios
-      .post(`http://localhost:${process.env.PORT}/login`, { code })
+      .post(`http://localhost:8000/login`, { code })
       .then((response) => {
         // If success then cut the code string from the URL and execute the other thing
         window.history.pushState({}, null, "/");
