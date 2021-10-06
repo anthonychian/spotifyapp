@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const authEndpoint = process.env.REACT_APP_AUTH_ENDPOINT;
 const redirectUri = process.env.REACT_APP_REDIRECT_URI;
-const clientId = process.env.REACT_APP_CLIENT_ID
+const clientId = process.env.REACT_APP_CLIENT_ID;
 
 const scopes = [
   "streaming",

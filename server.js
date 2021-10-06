@@ -3,11 +3,12 @@ const cors = require('cors')
 const spotifyWebApi = require('spotify-web-api-node')
 
 const app = express()
-const port = process.env.PORT
-console.log(port)
+const port = 8000
 
 app.use(cors()) // To handle cross-origin requests
 app.use(express.json()); // To parse JSON bodies
+
+require('dotenv').config()
 
 const credentials = {
   clientId: process.env.REACT_APP_CLIENT_ID,
@@ -16,7 +17,7 @@ const credentials = {
 };
 
 app.get('/', (req, res) => {
-  console.log('Hello World!')
+
 })
 
 app.post('/login', (req,res) => {
@@ -25,7 +26,6 @@ app.post('/login', (req,res) => {
 
 //  Get the "code" value posted from the client-side and get the user's accessToken from the spotify api     
     const code = req.body.code
-    console.log(code)
 
     // Retrieve an access token
     spotifyApi.authorizationCodeGrant(code).then((data) => {

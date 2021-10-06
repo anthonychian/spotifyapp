@@ -45,7 +45,6 @@ const Dashboard = ({ code }) => {
   const backgroundColor = useRef(0);
 
   const accessToken = useAuth(code);
-  console.log(code)
   
   const [userInfo, setUserInfo] = useState({
     name: '',
@@ -172,7 +171,6 @@ const Dashboard = ({ code }) => {
                     else {
                         spotifyApi.getPlaylist(currentPlaylist)
                         .then(userPlaylist => {
-                            console.log(userPlaylist)
                             // for each track in each playlist
                             userPlaylist.body.tracks.items.forEach((song) => {
                                 // console.log(song.track)
