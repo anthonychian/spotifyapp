@@ -26,7 +26,7 @@ export default function MyBubbles() {
                         },
                         "move": {
                             "random": true,
-                            "speed": 4,
+                            "speed": 2,
                             "direction": "top",
                             "out_mode": "out"
                         }

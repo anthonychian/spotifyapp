@@ -5,6 +5,7 @@ import AccountMenu from './AccountMenu'
 import MyPlaylists from './MyPlaylists'
 import MyTracks from './MyTracks'
 import NowPlaying from './NowPlaying'
+import PlayerButtons from './PlayerButtons'
 
 import useAuth from "../useAuth";
 import SpotifyWebApi from "spotify-web-api-node";
@@ -40,176 +41,257 @@ const spotifyApi = new SpotifyWebApi({
 
 const Dashboard = ({ code }) => {
 
-  const classes = useStyles()
+    const classes = useStyles()
 
-  const backgroundColor = useRef(0);
+    const backgroundColor = useRef(0);
 
-  const accessToken = useAuth(code);
-  
-  const [userInfo, setUserInfo] = useState({
-    name: '',
-    email: '',
-    followers: 0,
-    profile_pic: '',
-    link: '',
-    id: '',
-  })
-  const [playlists, setPlaylists] = useState([])
-  const [tracks, setTracks] = useState([])
-  const [currentTrack, setCurrentTrack] = useState('')
-  const [currentPlaylist, setCurrentPlaylist] = useState('')
-  const [currentPlaylistName, setCurrentPlaylistName] = useState('')
-  const [nowPlaying, setNowPlaying] = useState({})
-  const [currentColor, setCurrentColor] = useState('')
+    const accessToken = useAuth(code);
+    
+    const [userInfo, setUserInfo] = useState({
+        name: '',
+        email: '',
+        followers: 0,
+        profile_pic: '',
+        link: '',
+        id: '',
+    })
+    const [playlists, setPlaylists] = useState([])
+    const [tracks, setTracks] = useState([])
+    const [currentTrack, setCurrentTrack] = useState('')
+    const [currentPlaylist, setCurrentPlaylist] = useState('')
+    const [currentPlaylistName, setCurrentPlaylistName] = useState('')
+    const [nowPlaying, setNowPlaying] = useState({})
+    const [currentColor, setCurrentColor] = useState('')
+    const [paused, setPaused] = useState('')
+    const [skipSong, setSkipSong] = useState('')
 
-  // keeps track of current song (runs every 1 second)
-  useEffect(() => {
-    const timeoutID = setTimeout(() => {
-        axios({
-            url: `https://api.spotify.com/v1/me/player/currently-playing`,
-            method: 'GET',
-            headers: {
-            'Accept':'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-            }
-        }).then(function(res) {
-            let allArtists = ' '
-            if (res.data?.item?.artists) {
-                res.data?.item?.artists.map((x) => (
-                    allArtists += ` ${x.name}, `
-                ))
-            }
-            setNowPlaying({
-                name: res.data.item.name,
-                artist: allArtists,
-                image: res.data.item.album.images[0].url,
-            })
-        }).catch(function(error) {
-            console.log(error)
-        });
-    }, 1000);
-    return () => clearTimeout(timeoutID);
-  });
+    // keeps track of current song (runs every 1 second)
+    useEffect(() => {
+        const timeoutID = setTimeout(() => {
 
-  // when currentColor changes (song is clicked)
-  useEffect(() => {
-      function changeColor() {
-        backgroundColor.current.style.backgroundColor = currentColor
-      }
-      changeColor()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentColor]);
-
-  // use effect runs when currentTrack changes (song is clicked)
-  useEffect(() => {
-    async function playTrack() {
-        if (!accessToken || !currentTrack) return;
-        
-        // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
-        spotifyApi.setAccessToken(accessToken);
-        
-        await axios({
-            url: `https://api.spotify.com/v1/me/player/queue?uri=${currentTrack}`,
-            method: 'POST',
-            headers: {
-            'Accept':'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-            }
-        }).then(function(response) {
-            // console.log("#1 added to queue");
-        }).catch(function(error) {
-            console.log(error)
-        });
-
-        spotifyApi.skipToNext()
-        .then(function() {
-        // console.log('#2 Skip to next');
-        }, function(error) {
-        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-        console.log(error);
-        });
-    }
-
-    playTrack();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTrack]);
-
-  // use effect runs when accessToken or currentPlaylist changes (playlist is clicked)
-  useEffect(() => {
-    if (!accessToken) return;
-
-    // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
-    spotifyApi.setAccessToken(accessToken);
-
-    // Get user details with help of getMe() function
-    spotifyApi.getMe().then(data => {
-
-      // update the state of user info
-      setUserInfo({
-          name: data.body.display_name,
-          email: data.body.email,
-          followers: data.body.followers.total,
-          profile_pic: data.body.images[0].url,
-          link: data.body.uri,
-          id: data.body.id
-        })
-
-        // Get playlist details by user id
-        spotifyApi.getUserPlaylists(data.body.id)
-            .then(userPlaylists => {
-                
-                if (userPlaylists.body.items.length > 0) {
-                    // update the state of playlists once
-                    setPlaylists(userPlaylists.body.items)
+            spotifyApi.getMyCurrentPlaybackState()
+            .then(function(data) {
+                // Output items
+                if (data.body && data.body.is_playing) {
                     
-                    if (!currentPlaylist) {
-                        setCurrentPlaylist(userPlaylists.body.items[0].id)
-                        setCurrentPlaylistName(userPlaylists.body.items[0].name)
+                    if (paused === null || paused !== false) {
+                        setPaused(false);
                     }
-                    else {
-                        spotifyApi.getPlaylist(currentPlaylist)
-                        .then(userPlaylist => {
-                            // for each track in each playlist
-                            userPlaylist.body.tracks.items.forEach((song) => {
-                                // console.log(song.track)
-                                // update tracks state with name and image for each track
-                                let allArtists = ''
-                                song.track.artists.map((x) => (
-                                    allArtists += `${x.name}, `
-                                ))
-                                setTracks(tracks => [
-                                    ...tracks, {
-                                        name: song.track.name,
-                                        artist: allArtists,
-                                        image: song.track.album.images[0].url,
-                                        link: song.track.uri
-                                    } 
-                                ]);
-                            })
-                        });
+
+                    axios({
+                        url: `https://api.spotify.com/v1/me/player/currently-playing`,
+                        method: 'GET',
+                        headers: {
+                        'Accept':'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                        }
+                    }).then(function(res) {
+                        let allArtists = ' '
+                        if (res.data?.item?.artists) {
+                            res.data?.item?.artists.map((x) => (
+                                allArtists += ` ${x.name}, `
+                            ))
+                        }
+                        setNowPlaying({
+                            name: res.data.item.name,
+                            artist: allArtists,
+                            image: res.data.item.album.images[0].url,
+                        })
+                    }).catch(function(error) {
+                        console.log(error)
+                    });
+
+                } else {
+
+                    if (paused === null || paused !== true) {
+                        setPaused(true);
                     }
                 }
-                
+            }, function(err) {
+                console.log('Something went wrong!', err);
             });
-    })
-    
-  }, [accessToken, currentPlaylist]);
 
-  function clickSong(event, song) {
-    // console.log(e.target.getAttribute('longdesc'))
-    setCurrentTrack(event.target.getAttribute('longdesc'))
-    setNowPlaying({
-        name: song.name, artist: song.artist, image: song.image
-    })
-  }
-  function clickPlaylist(e) {
-    // console.log(e.target.getAttribute('longdesc'))
-    setCurrentPlaylistName(e.target.getAttribute('alt'))
-    setCurrentPlaylist(e.target.getAttribute('longdesc'))
-    setTracks([])
-  }
+        }, 1000);
+        return () => clearTimeout(timeoutID);
+    });
+
+    // when paused changes (play button is clicked)
+    useEffect(() => {
+        function changePlayState() {
+            if (paused) {
+                // Pause a User's Playback
+                spotifyApi.pause()
+                .then(function() {
+                    console.log('Playback paused');
+                }, function(err) {
+                //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+                    console.log('Something went wrong!', err);
+                });
+            }
+            else {
+                // Start/Resume a User's Playback 
+                spotifyApi.play()
+                .then(function() {
+                    console.log('Playback started');
+                }, function(err) {
+                //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+                    console.log('Something went wrong!', err);
+                });
+            }
+        }
+        changePlayState()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [paused]);
+
+    // when skipSong changes (song is clicked)
+    useEffect(() => {
+        function nextOrPrevious() {
+            if (skipSong.skip) {
+                console.log('SKIPPPP');
+                // Skip User’s Playback To Next Track
+                spotifyApi.skipToNext()
+                .then(function() {
+                    console.log('Skip to next');
+                }, function(err) {
+                //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+                console.log('Something went wrong!', err);
+                });
+            }
+            else {
+                console.log('PREVIOUSSS');
+                // Skip User’s Playback To Previous Track 
+                spotifyApi.skipToPrevious()
+                .then(function() {
+                    console.log('Skip to previous');
+                }, function(err) {
+                //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+                console.log('Something went wrong!', err);
+                });
+            }
+        }
+        nextOrPrevious()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [skipSong]);
+
+    // when currentColor changes (song is clicked)
+    useEffect(() => {
+        function changeColor() {
+            backgroundColor.current.style.backgroundColor = currentColor
+        }
+        changeColor()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentColor]);
+
+    // use effect runs when currentTrack changes (song is clicked)
+    useEffect(() => {
+        async function playTrack() {
+            if (!accessToken || !currentTrack) return;
+            
+            // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
+            spotifyApi.setAccessToken(accessToken);
+            
+            await axios({
+                url: `https://api.spotify.com/v1/me/player/queue?uri=${currentTrack}`,
+                method: 'POST',
+                headers: {
+                'Accept':'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+                }
+            }).then(function(response) {
+                // console.log("#1 added to queue");
+            }).catch(function(error) {
+                console.log(error)
+            });
+
+            spotifyApi.skipToNext()
+            .then(function() {
+            // console.log('#2 Skip to next');
+            }, function(error) {
+            //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+            console.log(error);
+            });
+        }
+
+        playTrack();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentTrack]);
+
+    // use effect runs when accessToken or currentPlaylist changes (playlist is clicked)
+    useEffect(() => {
+        if (!accessToken) return;
+
+        // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
+        spotifyApi.setAccessToken(accessToken);
+
+        // Get user details with help of getMe() function
+        spotifyApi.getMe().then(data => {
+
+        // update the state of user info
+        setUserInfo({
+            name: data.body.display_name,
+            email: data.body.email,
+            followers: data.body.followers.total,
+            profile_pic: data.body.images[0].url,
+            link: data.body.uri,
+            id: data.body.id
+            })
+
+            // Get playlist details by user id
+            spotifyApi.getUserPlaylists(data.body.id)
+                .then(userPlaylists => {
+                    
+                    if (userPlaylists.body.items.length > 0) {
+                        // update the state of playlists once
+                        setPlaylists(userPlaylists.body.items)
+                        
+                        if (!currentPlaylist) {
+                            setCurrentPlaylist(userPlaylists.body.items[0].id)
+                            setCurrentPlaylistName(userPlaylists.body.items[0].name)
+                        }
+                        else {
+                            spotifyApi.getPlaylist(currentPlaylist)
+                            .then(userPlaylist => {
+                                // for each track in each playlist
+                                userPlaylist.body.tracks.items.forEach((song) => {
+                                    // console.log(song.track)
+                                    // update tracks state with name and image for each track
+                                    let allArtists = ''
+                                    song.track.artists.map((x) => (
+                                        allArtists += `${x.name}, `
+                                    ))
+                                    setTracks(tracks => [
+                                        ...tracks, {
+                                            name: song.track.name,
+                                            artist: allArtists,
+                                            image: song.track.album.images[0].url,
+                                            link: song.track.uri
+                                        } 
+                                    ]);
+                                })
+                            });
+                        }
+                    }
+                    
+                });
+        })
+        
+    }, [accessToken, currentPlaylist]);
+
+    function clickSong(event, song) {
+        // console.log(e.target.getAttribute('longdesc'))
+        setCurrentTrack(event.target.getAttribute('longdesc'))
+        setNowPlaying({
+            name: song.name, artist: song.artist, image: song.image
+        })
+    }
+    function clickPlaylist(e) {
+        // console.log(e.target.getAttribute('longdesc'))
+        setCurrentPlaylistName(e.target.getAttribute('alt'))
+        setCurrentPlaylist(e.target.getAttribute('longdesc'))
+        setTracks([])
+    }
 
   return (
     <div ref={backgroundColor} className={classes.body}>
@@ -230,10 +312,12 @@ const Dashboard = ({ code }) => {
                     {nowPlaying.artist}
                 </div>
             </Marquee>
-            
         </div>}
         {nowPlaying && <div style={{"paddingBottom":"1em"}}>
             <NowPlaying setCurrentColor={setCurrentColor} nowPlaying={nowPlaying} />
+            <div className={classes.alignItemsAndJustifyContent}>
+                <PlayerButtons paused={paused} setPaused={setPaused} setSkipSong={setSkipSong}/>
+            </div>
         </div>}
         
         <div className={classes.alignItemsAndJustifyContent}>
