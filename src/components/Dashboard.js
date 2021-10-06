@@ -45,6 +45,7 @@ const Dashboard = ({ code }) => {
   const backgroundColor = useRef(0);
 
   const accessToken = useAuth(code);
+  console.log(code)
   
   const [userInfo, setUserInfo] = useState({
     name: '',
