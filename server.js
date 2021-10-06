@@ -4,6 +4,7 @@ const spotifyWebApi = require('spotify-web-api-node')
 
 const app = express()
 const port = process.env.PORT
+console.log(port)
 
 app.use(cors()) // To handle cross-origin requests
 app.use(express.json()); // To parse JSON bodies
