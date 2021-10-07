@@ -3,8 +3,10 @@ import Particles from 'react-particles-js';
 
 export default function MyBubbles() {
     return (
-        <div style={{ position: "absolute" }}>
+        <div style={{ height: "100%", width: "100%", position: "absolute" }}>
             <Particles
+                height="100vh"
+                width="100vw"
                 params={{
                     "particles": {
                         "number": {

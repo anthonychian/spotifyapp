@@ -6,6 +6,7 @@ import MyPlaylists from './MyPlaylists'
 import MyTracks from './MyTracks'
 import NowPlaying from './NowPlaying'
 import PlayerButtons from './PlayerButtons'
+import MyCircularColor from './MyCircularColor'
 
 import useAuth from "../useAuth";
 import SpotifyWebApi from "spotify-web-api-node";
@@ -13,7 +14,6 @@ import axios from 'axios';
 
 import { makeStyles } from '@material-ui/core/styles'
 import Marquee from "react-fast-marquee";
-
 
 
 const useStyles = makeStyles(theme => ({
@@ -30,6 +30,12 @@ const useStyles = makeStyles(theme => ({
     avatar: {
         padding: "1em 0 0 1em"
     },
+    bubbles: {
+        zIndex: "2",
+        height: "100vh",
+        width: "100vw",
+        position: "absolute"
+    }
   }))
   
 
@@ -64,6 +70,16 @@ const Dashboard = ({ code }) => {
     const [currentColor, setCurrentColor] = useState('')
     const [paused, setPaused] = useState('')
     const [skipSong, setSkipSong] = useState('')
+    const [loading, setLoading] = useState(true);
+
+    // delay to display loading for 1 second
+    useEffect(() => {
+        const timeoutID = setTimeout(() => {
+            setLoading(false);
+            },  1000);
+            return () => clearTimeout(timeoutID);
+    });
+
 
     // keeps track of current song (runs every 1 second)
     useEffect(() => {
@@ -148,7 +164,6 @@ const Dashboard = ({ code }) => {
     useEffect(() => {
         function nextOrPrevious() {
             if (skipSong.skip) {
-                console.log('SKIPPPP');
                 // Skip User’s Playback To Next Track
                 spotifyApi.skipToNext()
                 .then(function() {
@@ -159,7 +174,6 @@ const Dashboard = ({ code }) => {
                 });
             }
             else {
-                console.log('PREVIOUSSS');
                 // Skip User’s Playback To Previous Track 
                 spotifyApi.skipToPrevious()
                 .then(function() {
@@ -294,32 +308,52 @@ const Dashboard = ({ code }) => {
     }
 
   return (
+    
     <div ref={backgroundColor} className={classes.body}>
-        <div className={classes.avatar}>
-            <AccountMenu name={userInfo.name} src={userInfo.profile_pic} />
+        {/* <MyBubbles/> */}
+        <div className={classes.bubbles}>
+            <MyBubbles/>
         </div>
-        <MyBubbles/>
-        {nowPlaying && <div style={{"width": "30%", "margin": "auto"}}>
-            <Marquee gradient={false} pauseOnHover={true} speed={40}>
-                <div style={{"color":"white","fontSize": "2em"}} 
-                className={classes.alignItemsAndJustifyContent}>
-                    {nowPlaying.name}
-                </div>
-            </Marquee>
-            <Marquee gradient={false} pauseOnHover={true} speed={40}>
-                <div style={{"paddingBottom":"0.5em","color":"grey","fontSize": "1.5em"}} 
-                className={classes.alignItemsAndJustifyContent}>
-                    {nowPlaying.artist}
-                </div>
-            </Marquee>
-        </div>}
-        {nowPlaying && <div style={{"paddingBottom":"1em"}}>
-            <NowPlaying setCurrentColor={setCurrentColor} nowPlaying={nowPlaying} />
-            <div className={classes.alignItemsAndJustifyContent}>
-                <PlayerButtons paused={paused} setPaused={setPaused} setSkipSong={setSkipSong}/>
+        <div style={{"height":"100vh"}}>
+            <div className={classes.avatar}>
+                <AccountMenu name={userInfo.name} src={userInfo.profile_pic} />
             </div>
-        </div>}
-        
+            {nowPlaying.image && <div style={{
+                display: loading ? "none" : "block"}}>
+                <div style={{"width": "30%", "margin": "auto"}}>
+                    <Marquee gradient={false} pauseOnHover={true} speed={40}>
+                        <div style={{"color":"white","fontSize": "2em"}} 
+                        className={classes.alignItemsAndJustifyContent}>
+                            {nowPlaying.name}
+                        </div>
+                    </Marquee>
+                    <Marquee gradient={false} pauseOnHover={true} speed={40}>
+                        <div style={{"paddingBottom":"0.5em","color":"grey","fontSize": "1.5em"}} 
+                        className={classes.alignItemsAndJustifyContent}>
+                            {nowPlaying.artist}
+                        </div>
+                    </Marquee>
+                </div>
+
+                <div style={{"paddingBottom":"1em"}}>
+                    <NowPlaying setCurrentColor={setCurrentColor} nowPlaying={nowPlaying}/>
+                    <div className={classes.alignItemsAndJustifyContent}>
+                        <PlayerButtons paused={paused} setPaused={setPaused} setSkipSong={setSkipSong}/>
+                    </div>
+                </div>
+            </div>}
+            {nowPlaying && <div 
+                style={{
+                display: loading ? "flex" : "none",
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: "100%", 
+                width: "100%"
+            }}>
+                <MyCircularColor/>
+            </div>}
+
+        </div>
         <div className={classes.alignItemsAndJustifyContent}>
             <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist}/>
         </div>

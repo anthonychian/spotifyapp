@@ -8,7 +8,7 @@ import FastRewindRounded from '@mui/icons-material/FastRewindRounded';
 const mainIconColor = 'white'
 export default function PlayerButtons(props) {
     return (
-        <div>
+        <div style={{"zIndex": "5"}}>
             <IconButton 
                 sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
                 aria-label="previous song"

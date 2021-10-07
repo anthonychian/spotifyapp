@@ -72,7 +72,7 @@ export default function AccountMenu(props) {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem>
-          <Avatar /> Profile
+        <Avatar alt={props.name} src={props.src} sx={{ width: 32, height: 32 }}/> Profile
         </MenuItem>
         <MenuItem>
           <Avatar /> My account

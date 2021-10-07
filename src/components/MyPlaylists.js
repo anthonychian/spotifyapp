@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 
 export default function MyPlaylists(props) {
     return (
-        <ImageList sx={{ width: '50%', height: 'auto' }} cols={3}>
+        <ImageList sx={{ width: '50%', height: 'auto', paddingBottom: '5em' }} cols={3}>
             {props.playlists.map((playlist) => (
                 <ImageListItem onClick={props.clickPlaylist} key={playlist.id}>
                     <a href={playlist.uri}>

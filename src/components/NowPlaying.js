@@ -1,17 +1,21 @@
 import React from 'react'
+
 import { Palette } from 'react-palette';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import IconButton from '@mui/material/IconButton';
 
+
 export default function NowPlaying(props) {
     return (
-        <div style={{
-            display: 'flex',
+        <div 
+            style={{
+            display: "flex",
             alignItems: 'center',
             justifyContent: 'center',
             height: "100%", 
             width: "100%"
+
         }}>
             <Palette src={props.nowPlaying.image}>
                 {({ data, loading, error }) => (
@@ -25,6 +29,7 @@ export default function NowPlaying(props) {
                     alt={props.nowPlaying.name}
                     loading="lazy"
                 />
+                
                 <ImageListItemBar
                     title={props.nowPlaying.name}         
                     subtitle={props.nowPlaying.artist}
@@ -40,3 +45,4 @@ export default function NowPlaying(props) {
         </div>
     )
 }
+
