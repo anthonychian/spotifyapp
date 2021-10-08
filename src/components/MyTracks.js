@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import MyCircularColor from './MyCircularColor'
-
+import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ListSubheader from '@mui/material/ListSubheader';
@@ -13,12 +13,13 @@ export default function MyTracks(props) {
         const timeoutID = setTimeout(() => {
             setLoading(false);
             },  1000);
+            setLoading(true);
             return () => clearTimeout(timeoutID);
-    });
+    }, [props.spinner]);
 
 
     return (
-        <div>
+        <div onload="myFunction()">
             <div 
                 style={{
                 display: loading ? "none" : "flex",
@@ -36,13 +37,13 @@ export default function MyTracks(props) {
                             props.clickSong(e, {name: track.name, artist: track.artist, image: track.image});}} 
                             key = {track.id + '000' + idx}>
                             <a href={track.link}>
-                            <img
-                                src={`${track.image}?w=248&fit=crop&auto=format`}
-                                srcSet={`${track.image}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                                alt={track.name}
-                                longdesc={track.link}
-                                loading="lazy"
-                            />
+                                <img
+                                    src={`${track.image}?w=248&fit=crop&auto=format`}
+                                    srcSet={`${track.image}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                                    alt={track.name}
+                                    longdesc={track.link}
+                                    loading="lazy"
+                                />
                             </a>
                             <ImageListItemBar
                                 title={track.name}         
@@ -62,8 +63,12 @@ export default function MyTracks(props) {
             <div 
                 style={{
                 display: loading ? "block" : "none",
+                paddingTop: '10em',
+                paddingBottom: '10em',
                 }}>
-                    <MyCircularColor/>
+                    <Stack sx={{ color: 'white' }} spacing={2} direction="row">
+                        <CircularProgress color="inherit" />
+                    </Stack>
             </div>
         </div>
     )

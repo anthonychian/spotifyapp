@@ -28,7 +28,7 @@ export default function MyBubbles() {
                         },
                         "move": {
                             "random": true,
-                            "speed": 2,
+                            "speed": 5,
                             "direction": "top",
                             "out_mode": "out"
                         }
@@ -40,7 +40,7 @@ export default function MyBubbles() {
                                 "mode": "bubble"
                             },
                             "onclick": {
-                                "enable": true,
+                                "enable": false,
                                 "mode": "repulse"
                             }
                         },
@@ -52,7 +52,7 @@ export default function MyBubbles() {
                                 "opacity": 100
                             },
                             "repulse": {
-                                "distance": 400,
+                                "distance": 300,
                                 "duration": 4
                             }
                         }
