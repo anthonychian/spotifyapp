@@ -70,7 +70,6 @@ const Dashboard = ({ code }) => {
     const [currentPlaylist, setCurrentPlaylist] = useState('')
     const [currentPlaylistName, setCurrentPlaylistName] = useState('')
     const [nowPlaying, setNowPlaying] = useState({})
-    const [currentColor, setCurrentColor] = useState('')
     const [paused, setPaused] = useState('')
     const [skipSong, setSkipSong] = useState('')
     const [loading, setLoading] = useState(true);
@@ -214,15 +213,6 @@ const Dashboard = ({ code }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [skipSong]);
 
-    // when currentColor changes (song is clicked)
-    useEffect(() => {
-        function changeColor() {
-            backgroundColor.current.style.backgroundColor = currentColor
-        }
-        changeColor()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentColor]);
-
     // use effect runs when currentTrack changes (song is clicked)
     useEffect(() => {
         async function playTrack() {
@@ -333,6 +323,9 @@ const Dashboard = ({ code }) => {
         setTracks([])
         setSpinner(spinner + 1)
     }
+    function changeColor(color) {
+        backgroundColor.current.style.backgroundColor = color
+    }
 
   return (
     
@@ -363,7 +356,7 @@ const Dashboard = ({ code }) => {
                 </div>
 
                 <div style={{"paddingBottom":"1em"}}>
-                    <NowPlaying setCurrentColor={setCurrentColor} nowPlaying={nowPlaying}/>
+                    <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying}/>
                     <div className={classes.alignItemsAndJustifyContent}>
                         <PlayerButtons paused={paused} setPaused={setPaused} setSkipSong={setSkipSong}/>
                     </div>

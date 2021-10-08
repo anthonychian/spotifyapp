@@ -19,7 +19,7 @@ export default function NowPlaying(props) {
         }}>
             <Palette src={props.nowPlaying.image}>
                 {({ data, loading, error }) => (
-                    props.setCurrentColor(data.vibrant)
+                    props.changeColor(data.vibrant)
                 )}
             </Palette>
             <ImageListItem sx={{ width: '30%', height: 'auto' }}>

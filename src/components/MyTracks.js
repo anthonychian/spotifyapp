@@ -19,7 +19,7 @@ export default function MyTracks(props) {
 
 
     return (
-        <div onload="myFunction()">
+        <div>
             <div 
                 style={{
                 display: loading ? "none" : "flex",
