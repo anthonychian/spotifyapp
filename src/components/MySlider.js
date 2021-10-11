@@ -27,18 +27,12 @@ const Widget = styled('div')(() => ({
 
 export default function MySlider(props) {
     const theme = useTheme();
-    // let duration = props.nowPlaying.total / 1000;
-    // let position = props.nowPlaying.position / 1000;
     let duration = props.currentPosition.total / 1000;
     let position = props.currentPosition.position / 1000;
     if (isNaN(props.currentPosition.total) || isNaN(props.currentPosition.position)) {
         duration = 0;
         position = 0;
     }
-    // if (isNaN(props.nowPlaying.total) || isNaN(props.nowPlaying.position)) {
-    //     duration = 0;
-    //     position = 0;
-    // }
 
     function formatDuration(value) {
         const minute = Math.floor(value / 60);
@@ -61,11 +55,6 @@ export default function MySlider(props) {
                         total: props.currentPosition.total,
                         onChange: true
                     })}
-                    // onChange={(_, value) => props.setCurrentPosition({
-                    //     position: value * 1000,
-                    //     total: props.nowPlaying.total,
-                    //     onChange: true
-                    // })}
                     sx={{
                     color: 'white',
                     height: 4,

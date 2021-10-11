@@ -17,23 +17,26 @@ export default function PlayerButtons(props) {
             <IconButton 
                 sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
                 aria-label="next song"
-                onClick={() => props.setShuffle(!props.shuffle)}
-                >{props.shuffle ? (
-                  <ShuffleOnIcon 
-                    sx={{ fontSize: '1.5rem' }}
-                    htmlColor={mainIconColor}
-                  />
-                  ) : (
-                  <ShuffleIcon 
-                    sx={{ fontSize: '1.5rem' }}
-                    htmlColor={mainIconColor}
-                  />
-                )}
+                onClick={() => props.setShuffle({
+                  shuffle: !props.shuffle.shuffle,
+                  clicked: true
+                })}>
+                  {props.shuffle.shuffle ? (
+                    <ShuffleOnIcon 
+                      sx={{ fontSize: '1.5rem' }}
+                      htmlColor={mainIconColor}
+                    />
+                    ) : (
+                    <ShuffleIcon 
+                      sx={{ fontSize: '1.5rem' }}
+                      htmlColor={mainIconColor}
+                    />
+                  )}
             </IconButton>
             <IconButton 
                 sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
                 aria-label="previous song"
-                onClick={() => props.setSkipSong({skip:false, date: new Date()})}>
+                onClick={() => props.setSkipSong({ skip:false, clicked: true, date: new Date() })}>
                 <FastRewindRounded 
                   sx={{ fontSize: '3rem' }}
                   htmlColor={mainIconColor}
@@ -42,9 +45,12 @@ export default function PlayerButtons(props) {
 
             <IconButton
                 sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
-                aria-label={props.paused ? true : false}
-                onClick={() => props.setPaused(!props.paused)}
-            >{props.paused ? (
+                aria-label={props.paused.paused ? true : false}
+                onClick={() => props.setPaused({
+                  paused: !props.paused.paused,
+                  clicked: true
+                })}>
+                {props.paused.paused ? (
                 <PlayArrowRounded
                   sx={{ fontSize: '3.5rem' }}
                   htmlColor={mainIconColor}
@@ -57,7 +63,7 @@ export default function PlayerButtons(props) {
             <IconButton 
                 sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
                 aria-label="next song"
-                onClick={() => props.setSkipSong({skip: true, date: new Date()})}>
+                onClick={() => props.setSkipSong({skip: true, clicked: true, date: new Date()})}>
                 <FastForwardRounded 
                   sx={{ fontSize: '3rem' }}
                   htmlColor={mainIconColor}
@@ -71,7 +77,8 @@ export default function PlayerButtons(props) {
                 onClick={() => props.setRepeatSong({
                   repeatOff: false,
                   repeatContext: true,
-                  repeatTrack: false
+                  repeatTrack: false,
+                  clicked: true
                 })}>
                 <RepeatIcon 
                   sx={{ fontSize: '1.5rem' }}
@@ -84,7 +91,8 @@ export default function PlayerButtons(props) {
                 onClick={() => props.setRepeatSong({
                   repeatOff: false,
                   repeatContext: false,
-                  repeatTrack: true
+                  repeatTrack: true,
+                  clicked: true
                 })}>
                 <RepeatOnIcon 
                   sx={{ fontSize: '1.5rem' }}
@@ -98,7 +106,8 @@ export default function PlayerButtons(props) {
                 onClick={() => props.setRepeatSong({
                   repeatOff: true,
                   repeatContext: false,
-                  repeatTrack: false
+                  repeatTrack: false,
+                  clicked: true
                 })}>
                 <RepeatOneIcon 
                   sx={{ fontSize: '1.5rem' }}

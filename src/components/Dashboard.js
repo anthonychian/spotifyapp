@@ -7,16 +7,19 @@ import MyTracks from './MyTracks'
 import NowPlaying from './NowPlaying'
 import PlayerButtons from './PlayerButtons'
 import MySlider from "./MySlider";
-
+import TrackInfo from "./TrackInfo";
+import PlaylistName from "./PlaylistName";
 
 import useAuth from "../useAuth";
 import SpotifyWebApi from "spotify-web-api-node";
 import axios from 'axios';
 
 import { makeStyles } from '@material-ui/core/styles'
-import Marquee from "react-fast-marquee";
 import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
+// import Marquee from 'react-fast-marquee'
+
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -70,16 +73,17 @@ const Dashboard = ({ code }) => {
     const [currentPlaylist, setCurrentPlaylist] = useState('')
     const [currentPlaylistName, setCurrentPlaylistName] = useState('')
     const [nowPlaying, setNowPlaying] = useState({})
-    const [paused, setPaused] = useState()
-    const [skipSong, setSkipSong] = useState('')
+    const [paused, setPaused] = useState({})
+    const [skipSong, setSkipSong] = useState({})
     const [loading, setLoading] = useState(true);
     const [currentPosition, setCurrentPosition] = useState({})
     const [spinner, setSpinner] = useState(0)
-    const [shuffle, setShuffle] = useState()
+    const [shuffle, setShuffle] = useState({})
     const [repeatSong, setRepeatSong] = useState({
         repeatOff: null,
         repeatContext: null,
-        repeatTrack: null
+        repeatTrack: null,
+        clicked: false
     })
 
     // delay to display loading for a few seconds
@@ -103,19 +107,33 @@ const Dashboard = ({ code }) => {
                     
                     if (data.body.is_playing) {
                         // set pause/play button to correctly display current state
-                        if (paused == null || paused === true)
-                            setPaused(false);
+                        if (paused.paused == null || paused.paused === true)
+                            setPaused({
+                                paused: false,
+                                clicked: false
+                            })
                     } else {
-                        if (paused == null || paused === false)
-                            setPaused(true);
+                        if (paused.paused == null || paused.paused === false)
+                            setPaused({
+                                paused: true,
+                                clicked: false
+                            })
                     }
 
                     if (data.body.shuffle_state === false) {
-                        if (shuffle == null || shuffle === true)
-                            setShuffle(false)
+                        if (shuffle == null || shuffle === true) {
+                            setShuffle({
+                                shuffle: false,
+                                clicked: false
+                            })
+                        }
                     } else {
-                        if (shuffle == null || shuffle === false)
-                            setShuffle(true)
+                        if (shuffle == null || shuffle === false){
+                            setShuffle({
+                                shuffle: true,
+                                clicked: false
+                            })
+                        }
                     }
 
                     if (data.body.repeat_state === 'off') {
@@ -123,7 +141,8 @@ const Dashboard = ({ code }) => {
                             setRepeatSong({
                                 repeatOff: true,
                                 repeatContext: false,
-                                repeatTrack: false
+                                repeatTrack: false,
+                                clicked: false
                             })
                         }
                     } else if (data.body.repeat_state === 'context') {
@@ -131,7 +150,8 @@ const Dashboard = ({ code }) => {
                             setRepeatSong({
                                 repeatOff: false,
                                 repeatContext: true,
-                                repeatTrack: false
+                                repeatTrack: false,
+                                clicked: false
                             })
                         }
                     } else if (data.body.repeat_state === 'track') {
@@ -140,7 +160,8 @@ const Dashboard = ({ code }) => {
                             setRepeatSong({
                                 repeatOff: false,
                                 repeatContext: false,
-                                repeatTrack: true
+                                repeatTrack: true,
+                                clicked: false
                             })
                         }
                     }
@@ -162,18 +183,14 @@ const Dashboard = ({ code }) => {
                         ))
                     }
 
-                    if (true) {
-                        console.log('runs every 1 sec')
-                        setCurrentPosition({
-                            position: res.data.progress_ms,
-                            total: res.data.item.duration_ms,
-                            onChange: false
-                        })
-                    }
+                    setCurrentPosition({
+                        position: res.data.progress_ms,
+                        total: res.data.item.duration_ms,
+                        onChange: false
+                    })
 
                     // nowPlaying.name !== res.data.item.name
                     if (nowPlaying.name !== res.data.item.name) {
-                        console.log('runs only when song changes')
                         setNowPlaying({
                             name: res.data.item.name,
                             artist: allArtists,
@@ -214,7 +231,7 @@ const Dashboard = ({ code }) => {
 
     useEffect(() => {
         function changeShuffle() {
-            if (shuffle) {
+            if (shuffle.shuffle) {
                 // Toggle Shuffle For User’s Playback
                 spotifyApi.setShuffle(true)
                 .then(function() {
@@ -235,7 +252,8 @@ const Dashboard = ({ code }) => {
                 });
             }
         }
-        changeShuffle()
+        if (shuffle.clicked)
+            changeShuffle()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [shuffle]);
 
@@ -246,7 +264,7 @@ const Dashboard = ({ code }) => {
                 // Toggle Repeat For User’s Playback
                 spotifyApi.setRepeat('off')
                 .then(function() {
-                    //console.log('Repeat is on off.');
+                    console.log('Repeat is on off.');
                 }, function  (err) {
                     //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
                     console.log('Something went wrong!', err);
@@ -256,7 +274,7 @@ const Dashboard = ({ code }) => {
                 // Toggle Repeat For User’s Playback
                 spotifyApi.setRepeat('context')
                 .then(function() {
-                    //console.log('Repeat is on context.');
+                    console.log('Repeat is on context.');
                 }, function  (err) {
                     //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
                     console.log('Something went wrong!', err);
@@ -266,21 +284,22 @@ const Dashboard = ({ code }) => {
                 // Toggle Repeat For User’s Playback
                 spotifyApi.setRepeat('track')
                 .then(function() {
-                    //console.log('Repeat is on track.');
+                    console.log('Repeat is on track.');
                 }, function  (err) {
                     //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
                     console.log('Something went wrong!', err);
                 });
             }
         }
-        changeRepeat()
+        if (repeatSong.clicked)
+            changeRepeat()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [repeatSong]);
 
     // when paused changes (play button is clicked)
     useEffect(() => {
         function changePlayState() {
-            if (paused) {
+            if (paused.paused) {
                 // Pause a User's Playback
                 spotifyApi.pause()
                 .then(function() {
@@ -301,7 +320,8 @@ const Dashboard = ({ code }) => {
                 });
             }
         }
-        changePlayState()
+        if (paused.clicked)
+            changePlayState()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [paused]);
 
@@ -329,7 +349,8 @@ const Dashboard = ({ code }) => {
                 });
             }
         }
-        nextOrPrevious()
+        if (skipSong.clicked)
+            nextOrPrevious()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [skipSong]);
 
@@ -429,17 +450,20 @@ const Dashboard = ({ code }) => {
     }, [accessToken, currentPlaylist]);
 
     function clickSong(event, song) {
-        // console.log(e.target.getAttribute('longdesc'))
-        setCurrentTrack(event.target.getAttribute('longdesc'))
-        setNowPlaying({
-            name: song.name, artist: song.artist, image: song.image
-        })
+        if (nowPlaying.name !== event.target.getAttribute('alt')) {
+            setCurrentTrack(event.target.getAttribute('longdesc'))
+            setNowPlaying({
+                name: song.name, artist: song.artist, image: song.image
+            })
+        }
     }
     function clickPlaylist(e) {
-        setCurrentPlaylistName(e.target.getAttribute('alt'))
-        setCurrentPlaylist(e.target.getAttribute('longdesc'))
-        setTracks([])
-        setSpinner(spinner + 1)
+        if (e.target.getAttribute('alt') !== currentPlaylistName) {
+            setCurrentPlaylistName(e.target.getAttribute('alt'))
+            setCurrentPlaylist(e.target.getAttribute('longdesc'))
+            setTracks([])
+            setSpinner(spinner + 1)
+        }
     }
     function changeColor(color) {
         backgroundColor.current.style.backgroundColor = color
@@ -456,28 +480,18 @@ const Dashboard = ({ code }) => {
             <div className={classes.avatar}>
                 <AccountMenu name={userInfo.name} src={userInfo.profile_pic} />
             </div>
-            <div style={{
-                }}>
-                <div style={{"width": "30%", "margin": "auto"}}>
-                    {/* <Marquee gradient={false} speed={40}>
-                        <div style={{"color":"white","fontSize": "2em", "textAlign": "left"}} 
-                        className={classes.alignItemsAndJustifyContent}>
-                            
-                            {nowPlaying.name}
-                        </div>
-                    </Marquee> */}
-                    {/* <Marquee gradient={false} speed={40}>
-                        <div style={{"paddingBottom":"0.5em","color":"grey","fontSize": "1.5em", "textAlign": "left"}} 
-                        className={classes.alignItemsAndJustifyContent}>
-                            {nowPlaying.artist}
-                        </div>
-                    </Marquee> */}
-                </div>
+            <div>
+                
+                {/* <Marquee style={{"width": "30%", "margin": "auto"}} gradient={false} speed={40}> */}
+                    <TrackInfo nowPlaying={nowPlaying} />
+                {/* </Marquee> */}
+                
+                
 
                 <div style={{"paddingBottom":"1em"}}>
-
+                    
                     <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying}/>
-
+                    
                     <div className={classes.alignItemsAndJustifyContent}>
                         <PlayerButtons 
                             paused={paused} 
@@ -491,7 +505,6 @@ const Dashboard = ({ code }) => {
                     </div>
                     <div className={classes.alignItemsAndJustifyContent}>
                         <MySlider setCurrentPosition={setCurrentPosition} currentPosition={currentPosition}/>
-                        {/* <MySlider setCurrentPosition={setCurrentPosition} nowPlaying={nowPlaying}/> */}
                     </div>
                 </div>
             </div>
@@ -518,13 +531,12 @@ const Dashboard = ({ code }) => {
             <div className={classes.alignItemsAndJustifyContent}>
                 <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist}/>
             </div>
-            <div style={{"width": "20%", "margin": "auto"}}className={classes.alignItemsAndJustifyContent}>
-                <Marquee gradient={false} speed={40}>
-                    <div style={{"color":"white","fontSize": "1.5em"}}>
-                        {currentPlaylistName}
-                    </div>
-                </Marquee>
-            </div>
+            
+                
+                {/* <Marquee style={{"width": "40%", "margin": "auto"}}gradient={false} speed={40}> */}
+                    <PlaylistName currentPlaylistName={currentPlaylistName} />
+                {/* </Marquee> */}
+            
             <div className={classes.alignItemsAndJustifyContent}>
                 <MyTracks tracks={tracks} clickSong={clickSong} spinner={spinner}/>
             </div>
