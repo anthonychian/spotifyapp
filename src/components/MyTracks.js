@@ -35,7 +35,13 @@ export default function MyTracks(props) {
                     {props.tracks.map((track, idx) => (
                         <ImageListItem 
                             onClick={(e) => {
-                                props.clickSong(e, {name: track.name, artist: track.artist, image: track.image});
+                                props.clickSong(e, {
+                                    name: track.name, 
+                                    artist: track.artist, 
+                                    image: track.image,
+                                    imageHigh: track.imageHigh,
+                                    imageLow: track.imageLow
+                                });
                             }} 
                             key = {track.id + '000' + idx}>
                             <a href={track.link}>
