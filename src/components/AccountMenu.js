@@ -88,12 +88,14 @@ export default function AccountMenu(props) {
           </ListItemIcon>
           Settings
         </MenuItem>
+        <a href={'https://accounts.spotify.com/en/logout'}>
         <MenuItem>
           <ListItemIcon>
             <Logout sx={{ color: "white" }} fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>
+        </a>
       </Menu>
     </div>
   );

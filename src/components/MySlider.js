@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 
-const Widget = styled('div')(({ theme }) => ({
+const Widget = styled('div')(() => ({
     padding: 16,
     borderRadius: 16,
     width: 343,
@@ -27,8 +27,18 @@ const Widget = styled('div')(({ theme }) => ({
 
 export default function MySlider(props) {
     const theme = useTheme();
-    const duration = props.nowPlaying.total / 1000;
-    const position = props.nowPlaying.position / 1000;
+    // let duration = props.nowPlaying.total / 1000;
+    // let position = props.nowPlaying.position / 1000;
+    let duration = props.currentPosition.total / 1000;
+    let position = props.currentPosition.position / 1000;
+    if (isNaN(props.currentPosition.total) || isNaN(props.currentPosition.position)) {
+        duration = 0;
+        position = 0;
+    }
+    // if (isNaN(props.nowPlaying.total) || isNaN(props.nowPlaying.position)) {
+    //     duration = 0;
+    //     position = 0;
+    // }
 
     function formatDuration(value) {
         const minute = Math.floor(value / 60);
@@ -47,9 +57,15 @@ export default function MySlider(props) {
                     step={1}
                     max={duration}
                     onChange={(_, value) => props.setCurrentPosition({
-                        position_ms: value * 1000,
-                        total_ms: props.nowPlaying.total
+                        position: value * 1000,
+                        total: props.currentPosition.total,
+                        onChange: true
                     })}
+                    // onChange={(_, value) => props.setCurrentPosition({
+                    //     position: value * 1000,
+                    //     total: props.nowPlaying.total,
+                    //     onChange: true
+                    // })}
                     sx={{
                     color: 'white',
                     height: 4,
