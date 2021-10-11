@@ -4,9 +4,28 @@ import { Palette } from 'react-palette';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import IconButton from '@mui/material/IconButton';
+import { makeStyles } from '@material-ui/core/styles'
+
+
+const useStyles = makeStyles(theme => ({
+    coverImg: {
+        ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+          width: '90%',
+        },
+        ['@media (min-width:480px)']: { // eslint-disable-line no-useless-computed-key
+            width: 417.59,
+        },
+        ['@media (min-width:1282px)']: { // eslint-disable-line no-useless-computed-key
+            width: '33%',
+        }
+      }
+  }))
 
 
 export default function NowPlaying(props) {
+
+    const classes = useStyles()
+
     return (
         <div 
             style={{
@@ -22,10 +41,11 @@ export default function NowPlaying(props) {
                     props.changeColor(data.vibrant)
                 )}
             </Palette>
-            <ImageListItem sx={{ width: '30%', height: 'auto' }}>
+            {/* <ImageListItem sx={{ width: '30%', height: 'auto' }}> */}
+            <ImageListItem className={classes.coverImg}>
                 <img 
-                    src={`${props.nowPlaying.image}?w=248&fit=crop&auto=format`}
-                    srcSet={`${props.nowPlaying.image}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    src={`${props.nowPlaying.image}`}
+                    srcSet={`${props.nowPlaying.imageHigh} 1x`}
                     alt={props.nowPlaying.name}
                     loading="lazy"
                 />

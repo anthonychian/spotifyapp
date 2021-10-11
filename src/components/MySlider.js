@@ -9,6 +9,10 @@ const Widget = styled('div')(() => ({
     borderRadius: 16,
     width: 343,
     maxWidth: '100%',
+    ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+        width: 250,
+    },
+    minWidth: 250,
     margin: 'auto',
     position: 'relative',
     zIndex: 7,

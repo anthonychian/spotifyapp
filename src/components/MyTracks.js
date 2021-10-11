@@ -28,18 +28,22 @@ export default function MyTracks(props) {
                 height: "100%", 
                 width: "100%"
             }}>
-                <ImageList sx={{ width: 1000, height: 1000  }}>
+                <ImageList sx={{ width: '1', height: '1'  }} cols={3}>
                     <ImageListItem key="Subheader" cols={3}>
                         <ListSubheader component="div">{props.tracks.length} Songs</ListSubheader>
                     </ImageListItem>
                     {props.tracks.map((track, idx) => (
-                        <ImageListItem onClick={(e) => {
-                            props.clickSong(e, {name: track.name, artist: track.artist, image: track.image});}} 
+                        <ImageListItem 
+                            onClick={(e) => {
+                                props.clickSong(e, {name: track.name, artist: track.artist, image: track.image});
+                            }} 
                             key = {track.id + '000' + idx}>
                             <a href={track.link}>
                                 <img
-                                    src={`${track.image}?w=248&fit=crop&auto=format`}
-                                    srcSet={`${track.image}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                                    src={`${track.imageLow}`}
+                                    srcSet={`${track.image} 1x, ${track.imageHigh} 2x`}
+                                    height="auto"
+                                    width="100%"
                                     alt={track.name}
                                     longdesc={track.link}
                                     loading="lazy"

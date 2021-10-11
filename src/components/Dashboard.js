@@ -190,11 +190,14 @@ const Dashboard = ({ code }) => {
                     })
 
                     // nowPlaying.name !== res.data.item.name
+                    
                     if (nowPlaying.name !== res.data.item.name) {
                         setNowPlaying({
                             name: res.data.item.name,
                             artist: allArtists,
-                            image: res.data.item.album.images[0].url
+                            image: res.data.item.album.images[1].url,
+                            imageHigh: res.data.item.album.images[0].url,
+                            imageLow: res.data.item.album.images[2].url
                             // position: res.data.progress_ms,
                             // total: res.data.item.duration_ms
                         })
@@ -435,7 +438,9 @@ const Dashboard = ({ code }) => {
                                     ...tracks, {
                                         name: song.track.name,
                                         artist: allArtists,
-                                        image: song.track.album.images[0].url,
+                                        image: song.track.album.images[1].url,
+                                        imageHigh: song.track.album.images[0].url,
+                                        imageLow: song.track.album.images[2].url,
                                         link: song.track.uri
                                     } 
                                 ]);
@@ -453,7 +458,7 @@ const Dashboard = ({ code }) => {
         if (nowPlaying.name !== event.target.getAttribute('alt')) {
             setCurrentTrack(event.target.getAttribute('longdesc'))
             setNowPlaying({
-                name: song.name, artist: song.artist, image: song.image
+                name: song.name, artist: song.artist, image: song.image, imageHigh: song.imageHigh, imageLow: song.imageLow,
             })
         }
     }

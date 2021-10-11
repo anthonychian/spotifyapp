@@ -12,8 +12,8 @@ export default function MyPlaylists(props) {
                     <a href={playlist.uri}>
                     <img
                         src={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format`}
-                        height="200"
-                        width="200"
+                        height="auto"
+                        width="100%"
                         srcSet={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                         alt={playlist.name}
                         loading="lazy"
