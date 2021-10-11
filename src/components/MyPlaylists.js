@@ -3,22 +3,46 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import IconButton from '@mui/material/IconButton';
+import { makeStyles } from '@material-ui/core/styles'
+
+
+const useStyles = makeStyles(theme => ({
+    container: {
+        height: 'auto',
+        marginTop: 200,
+        ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+          width: '90%',
+        },
+        ['@media (max-height:780px)']: { // eslint-disable-line no-useless-computed-key
+            marginTop: 400,
+            width: "90%"
+        },
+        ['@media (min-height:780px)']: { // eslint-disable-line no-useless-computed-key
+            marginTop: 200,
+            width: 687.59
+        },
+      }
+  }))
 
 export default function MyPlaylists(props) {
+    const classes = useStyles()
+
     return (
-        <ImageList sx={{ width: '50%', height: 'auto', paddingBottom: '5em' }} cols={3}>
+        // <ImageList sx={{ width: '50%', height: 'auto', paddingBottom: '5em' }} cols={3}>
+        <ImageList className={classes.container} cols={3}>
             {props.playlists.map((playlist) => (
                 <ImageListItem onClick={props.clickPlaylist} key={playlist.id}>
                     <a href={playlist.uri}>
-                    <img
-                        src={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format`}
-                        height="auto"
-                        width="100%"
-                        srcSet={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                        alt={playlist.name}
-                        loading="lazy"
-                        longdesc={playlist.id}
-                    />
+                        <img
+                            // className={classes.container}
+                            src={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format`}
+                            height="auto"
+                            width="100%"
+                            srcSet={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                            alt={playlist.name}
+                            loading="lazy"
+                            longdesc={playlist.id}
+                        />
                     </a>
                     <ImageListItemBar
                         title={playlist.name}         

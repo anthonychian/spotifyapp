@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
         },
         ['@media (min-width:1282px)']: { // eslint-disable-line no-useless-computed-key
             width: '33%',
-        }
+        },
       }
   }))
 
