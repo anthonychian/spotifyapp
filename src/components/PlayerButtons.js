@@ -15,7 +15,7 @@ export default function PlayerButtons(props) {
     return (
         <div style={{"zIndex": "5"}}>
             <IconButton 
-                sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
+                sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setShuffle({
                   shuffle: !props.shuffle.shuffle,
@@ -34,7 +34,7 @@ export default function PlayerButtons(props) {
                   )}
             </IconButton>
             <IconButton 
-                sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
+                sx={{ fontSize: 80, color: "white" }}
                 aria-label="previous song"
                 onClick={() => props.setSkipSong({ skip:false, clicked: true, date: new Date() })}>
                 <FastRewindRounded 
@@ -44,7 +44,7 @@ export default function PlayerButtons(props) {
             </IconButton>
 
             <IconButton
-                sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
+                sx={{ fontSize: 80, color: "white" }}
                 aria-label={props.paused.paused ? true : false}
                 onClick={() => props.setPaused({
                   paused: !props.paused.paused,
@@ -61,7 +61,7 @@ export default function PlayerButtons(props) {
             </IconButton>
 
             <IconButton 
-                sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
+                sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setSkipSong({skip: true, clicked: true, date: new Date()})}>
                 <FastForwardRounded 
@@ -72,7 +72,7 @@ export default function PlayerButtons(props) {
 
 
             {props.repeatSong.repeatOff && <IconButton 
-                sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
+                sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setRepeatSong({
                   repeatOff: false,
@@ -86,7 +86,7 @@ export default function PlayerButtons(props) {
                 />
             </IconButton>}
             {props.repeatSong.repeatContext && <IconButton 
-                sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
+                sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setRepeatSong({
                   repeatOff: false,
@@ -101,7 +101,7 @@ export default function PlayerButtons(props) {
             </IconButton>}
 
             {props.repeatSong.repeatTrack && <IconButton 
-                sx={{ fontSize: 80, paddingTop : "0.5em", color: "white" }}
+                sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setRepeatSong({
                   repeatOff: true,

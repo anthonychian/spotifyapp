@@ -17,7 +17,7 @@ import { makeStyles } from '@material-ui/core/styles'
 const useStyles = makeStyles(() => ({
     container: {
         zIndex: 8,
-        ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+        ['@media (max-width:1282px)']: { // eslint-disable-line no-useless-computed-key
           display: 'none',
         }
       }
