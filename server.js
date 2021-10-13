@@ -16,6 +16,10 @@ const credentials = {
   redirectUri: process.env.REACT_APP_REDIRECT_URI,
 };
 
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+})
+
 app.get('/', (req, res) => {
 
 })
@@ -40,8 +44,4 @@ app.post('/login', (req,res) => {
         res.sendStatus(400)
     })
 
-})
-
-const server = app.listen(port, () => {
-  console.log(`Listening on port ${port}`)
 })
