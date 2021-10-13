@@ -7,7 +7,7 @@ export default function useAuth(code) {
 
   useEffect(() => {
     axios
-      .post(`http://localhost:${port}/login`, { code })
+      .post(`http://localhost:80/login`, { code })
       .then((response) => {
         // If success then cut the code string from the URL and execute the other thing
         window.history.pushState({}, null, "/");
