@@ -80,7 +80,7 @@ const Dashboard = ({ code }) => {
     const [spinner, setSpinner] = useState(0)
     const [shuffle, setShuffle] = useState({})
     const [repeatSong, setRepeatSong] = useState({
-        repeatOff: null,
+        repeatOff: true,
         repeatContext: null,
         repeatTrack: null,
         clicked: false
