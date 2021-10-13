@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default function useAuth(code) {
   const [accessToken, setAccessToken] = useState();
-  const port = process.env.PORT || 80
+  const port = 80
 
   useEffect(() => {
     axios
