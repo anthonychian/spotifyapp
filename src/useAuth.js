@@ -15,8 +15,8 @@ export default function useAuth(code) {
         // If success then cut the code string from the URL and execute the other thing
         window.history.pushState({}, null, "/");
 
-        //console.log(response.data);
-        //console.log(response.data.accessToken);
+        console.log(response.data);
+        console.log(response.data.accessToken);
         setAccessToken(response.data.accessToken);
 
       })
