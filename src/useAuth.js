@@ -3,10 +3,14 @@ import axios from 'axios';
 
 export default function useAuth(code) {
   const [accessToken, setAccessToken] = useState();
+  // const baseURL = 'http://localhost:8000'
+  // const baseURL = process.env.REACT_APP_REDIRECT_URI
+
+
 
   useEffect(() => {
     axios
-      .post(`${process.env.REACT_APP_REDIRECT_URI}/login`, { code })
+      .post(`http://localhost:${process.env.PORT}/login`, { code })
       .then((response) => {
         // If success then cut the code string from the URL and execute the other thing
         window.history.pushState({}, null, "/");

@@ -3,7 +3,8 @@ const cors = require('cors')
 const spotifyWebApi = require('spotify-web-api-node')
 
 const app = express()
-const port = 80
+// const port = process.env.PORT || 8000
+const port = 8000
 // const host = '0.0.0.0';
 
 app.use(cors()) // To handle cross-origin requests
