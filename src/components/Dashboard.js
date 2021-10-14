@@ -58,6 +58,7 @@ const Dashboard = ({ code }) => {
     const backgroundColor = useRef(0);
 
     const accessToken = useAuth(code);
+    console.log(accessToken)
     
     const [userInfo, setUserInfo] = useState({
         name: '',
@@ -98,6 +99,9 @@ const Dashboard = ({ code }) => {
     // keeps track of current song (runs every 1 second)
     useEffect(() => {
         const timeoutID = setTimeout(() => {
+
+            // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
+            spotifyApi.setAccessToken(accessToken);
 
             spotifyApi.getMyCurrentPlaybackState()
             .then(function(data) {
