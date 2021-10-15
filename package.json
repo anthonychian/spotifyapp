@@ -31,7 +31,7 @@
     "npm": "6.14.8"
   },
   "scripts": {
-    "postinstall": "npm run build",
+    "postinstall": "react-scripts start",
     "start": "node server.js",
     "dev": "react-scripts start",
     "build": "react-scripts build",
