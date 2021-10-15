@@ -11,7 +11,7 @@ export default function useAuth(code) {
 
   useEffect(() => {
     axios
-      .post(`https://spotify-api-react-app-server.herokuapp.com/login`, { code })
+      .post(`http://spotify-api-react-app-server.herokuapp.com/login`, { code })
       .then((response) => {
         // If success then cut the code string from the URL and execute the other thing
         window.history.pushState({}, null, "/");

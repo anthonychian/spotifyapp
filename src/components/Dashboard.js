@@ -57,7 +57,7 @@ const Dashboard = ({ code }) => {
 
     const backgroundColor = useRef(0);
 
-    console.log(code)
+    // console.log(code)
     const accessToken = useAuth(code);
     console.log(accessToken)
     
