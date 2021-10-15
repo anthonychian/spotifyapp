@@ -5,7 +5,7 @@ const spotifyWebApi = require('spotify-web-api-node')
 const app = express()
 const port = process.env.PORT || 443
 // const port = 443
-// const host = '0.0.0.0';
+const host = '0.0.0.0';
 
 app.use(cors()) // To handle cross-origin requests
 app.use(express.json()); // To parse JSON bodies
@@ -18,7 +18,7 @@ const credentials = {
   redirectUri: process.env.REACT_APP_REDIRECT_URI,
 };
 
-app.listen(port, () => {
+app.listen(port, host,  () => {
     console.log(`Listening on port ${port}`)
 })
 
