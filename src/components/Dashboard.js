@@ -78,6 +78,7 @@ const Dashboard = ({ code }) => {
     const [paused, setPaused] = useState({})
     const [skipSong, setSkipSong] = useState({})
     const [loading, setLoading] = useState(true);
+    const [activeDevice, setActiveDevice] = useState(false)
     const [currentPosition, setCurrentPosition] = useState({})
     const [spinner, setSpinner] = useState(0)
     const [shuffle, setShuffle] = useState({})
@@ -103,6 +104,20 @@ const Dashboard = ({ code }) => {
 
             // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
             spotifyApi.setAccessToken(accessToken);
+
+            if (!activeDevice) {
+                // Get a User's Available Devices
+                spotifyApi.getMyDevices()
+                .then(function(data) {
+                    let availableDevices = data.body.devices;
+                    console.log(availableDevices);
+                    if (availableDevices.length > 0) {
+                        setActiveDevice(true)
+                    }
+                }, function(err) {
+                    console.log('Something went wrong!', err);
+                });
+            }
 
             spotifyApi.getMyCurrentPlaybackState()
             .then(function(data) {
@@ -550,7 +565,7 @@ const Dashboard = ({ code }) => {
                 {/* </Marquee> */}
             
             <div className={classes.alignItemsAndJustifyContent}>
-                <MyTracks tracks={tracks} clickSong={clickSong} spinner={spinner}/>
+                <MyTracks tracks={tracks} clickSong={clickSong} spinner={spinner} activeDevice={activeDevice}/>
             </div>
         </div>}
 

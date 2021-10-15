@@ -6,7 +6,6 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ListSubheader from '@mui/material/ListSubheader';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import IconButton from '@mui/material/IconButton';
-import { DivMode } from 'tsparticles';
 
 export default function MyTracks(props) {
     const [loading, setLoading] = useState(true);
@@ -45,7 +44,8 @@ export default function MyTracks(props) {
                                 });
                             }} 
                             key = {track.id + '000' + idx}>
-                            <div style={{ cursor: 'pointer' }}>
+                            
+                            {!props.activeDevice && <a href={track.link}>
                                 <img
                                     src={`${track.imageLow}`}
                                     srcSet={`${track.image} 1x, ${track.imageHigh} 2x`}
@@ -55,7 +55,18 @@ export default function MyTracks(props) {
                                     longdesc={track.link}
                                     loading="lazy"
                                 />
-                            </div>
+                            </a>}
+                            {props.activeDevice && <div style={{ cursor: 'pointer' }}>
+                                <img
+                                    src={`${track.imageLow}`}
+                                    srcSet={`${track.image} 1x, ${track.imageHigh} 2x`}
+                                    height="auto"
+                                    width="100%"
+                                    alt={track.name}
+                                    longdesc={track.link}
+                                    loading="lazy"
+                                />
+                            </div>}
                             <ImageListItemBar
                                 title={track.name}         
                                 subtitle={track.artist}
