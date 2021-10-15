@@ -59,7 +59,7 @@ const Dashboard = ({ code }) => {
 
     // console.log(code)
     const accessToken = useAuth(code);
-    console.log(accessToken)
+    //console.log(accessToken)
     
     const [userInfo, setUserInfo] = useState({
         name: '',
