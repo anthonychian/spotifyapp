@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default function useAuth(code) {
   const [accessToken, setAccessToken] = useState();
-  const baseURL = process.env.REACT_APP_SERVER
+  const baseURL = (process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER : 'http://localhost:8000');
 
 
   useEffect(() => {
@@ -22,6 +22,7 @@ export default function useAuth(code) {
         //   If fail redirect to home page - Login page
         window.location = "/";
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code]);
 
   return accessToken

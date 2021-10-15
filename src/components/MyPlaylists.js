@@ -32,7 +32,7 @@ export default function MyPlaylists(props) {
         <ImageList className={classes.container} cols={3}>
             {props.playlists.map((playlist) => (
                 <ImageListItem onClick={props.clickPlaylist} key={playlist.id}>
-                    <a href={playlist.uri}>
+                    <div style={{ cursor: 'pointer' }}>
                         <img
                             // className={classes.container}
                             src={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format`}
@@ -43,7 +43,7 @@ export default function MyPlaylists(props) {
                             loading="lazy"
                             longdesc={playlist.id}
                         />
-                    </a>
+                    </div>
                     <ImageListItemBar
                         title={playlist.name}         
                         subtitle={playlist.owner.display_name}
