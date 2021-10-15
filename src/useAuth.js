@@ -10,13 +10,13 @@ export default function useAuth(code) {
 
   useEffect(() => {
     axios
-      .post(`https://spotify-api-react-app.herokuapp.com:8000/login`, { code })
+      .post(`https://spotify-api-react-app.herokuapp.com:${process.env.PORT}/login`, { code })
       .then((response) => {
         // If success then cut the code string from the URL and execute the other thing
         window.history.pushState({}, null, "/");
 
-        console.log(response.data);
-        console.log(response.data.accessToken);
+        // console.log(response.data);
+        // console.log(response.data.accessToken);
         setAccessToken(response.data.accessToken);
 
       })
