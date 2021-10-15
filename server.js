@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 
 })
 
-app.post('/login', (req,res) => {
+app.post(':80/login', (req,res) => {
 //  setup 
     let spotifyApi = new spotifyWebApi(credentials)
 
