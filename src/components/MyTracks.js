@@ -44,7 +44,7 @@ export default function MyTracks(props) {
                                 });
                             }} 
                             key = {track.id + '000' + idx}>
-                            <a>
+                            <a href={track.link}>
                                 <img
                                     src={`${track.imageLow}`}
                                     srcSet={`${track.image} 1x, ${track.imageHigh} 2x`}
