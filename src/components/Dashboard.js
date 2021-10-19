@@ -43,19 +43,17 @@ const useStyles = makeStyles((theme) => ({
   },
   trackInfoContainer: {
     margin: "auto",
-    ["@media (max-width:480px)"]: {
-      // eslint-disable-line no-useless-computed-key
+    "@media (max-width:480px)": {
+         
       width: "90%",
       fontSize: "0.7em",
       paddingTop: 50,
     },
-    ["@media (min-width:480px)"]: {
-      // eslint-disable-line no-useless-computed-key
+    "@media (min-width:480px)": {
       width: 417.59,
       paddingTop: 50,
     },
-    ["@media (min-width:1282px)"]: {
-      // eslint-disable-line no-useless-computed-key
+    "@media (min-width:1282px)": {
       width: "33%",
       paddingTop: 0,
     },
@@ -541,7 +539,7 @@ const Dashboard = ({ code }) => {
     <div>
         <div 
             style={{
-                display: loading ? "none" : "block",
+                display: !loading && activeDevice ? "block" : "none",
             }}
             ref={backgroundColor}  
             className={classes.body}>
@@ -551,11 +549,11 @@ const Dashboard = ({ code }) => {
                 style={{ height: "100%"}}
                 className={classes.bubbles}
                 >
-                <MyBubbles />
+                    <MyBubbles />
                 </div>
 
                 <div className={classes.avatar}>
-                <AccountMenu name={userInfo.name} src={userInfo.profile_pic} />
+                    <AccountMenu name={userInfo.name} src={userInfo.profile_pic} />
                 </div>
 
                 <Marquee
@@ -563,7 +561,7 @@ const Dashboard = ({ code }) => {
                 gradient={false}
                 speed={40}
                 >
-                <TrackInfo nowPlaying={nowPlaying} />
+                    <TrackInfo nowPlaying={nowPlaying} />
                 </Marquee>
 
                 <div style={{ paddingBottom: "1em" }}>
