@@ -8,53 +8,74 @@ import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
     container: {
-        height: 'auto',
+        // height: 'auto',
         marginTop: 200,
+        
         ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
-          width: '90%',
+          width: '92vw',
         },
-        ['@media (max-height:780px)']: { // eslint-disable-line no-useless-computed-key
-            marginTop: 400,
-            width: "90%"
+        // ['@media (max-width:780px)']: { // eslint-disable-line no-useless-computed-key
+        //     marginTop: 400,
+        //     width: "90vw"
+        // },
+        // ['@media (min-height:780px)']: { // eslint-disable-line no-useless-computed-key
+        //     marginTop: 200,
+        //     width: 687.59
+        // },
+    },
+    textContainer: {
+        height: "auto",
+        width: "auto",
+    },
+    imgContainer: {
+        overflow: 'hidden',
+        height: "20vw",
+        width: "20vw",
+        cursor: 'pointer',
+        ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+            width: '30vw',
+            height: '30vw',
         },
-        ['@media (min-height:780px)']: { // eslint-disable-line no-useless-computed-key
-            marginTop: 200,
-            width: 687.59
-        },
-      }
+        
+    },
+    img: {
+        height: "100%",
+        minWidth: "100%",
+    }
   }))
 
 export default function MyPlaylists(props) {
     const classes = useStyles()
 
     return (
-        // <ImageList sx={{ width: '50%', height: 'auto', paddingBottom: '5em' }} cols={3}>
         <ImageList className={classes.container} cols={3}>
             {props.playlists.map((playlist) => (
                 <ImageListItem onClick={props.clickPlaylist} key={playlist.id}>
-                    <div style={{ cursor: 'pointer' }}>
+                    <div className={classes.imgContainer} >
                         <img
-                            // className={classes.container}
+                            className={classes.img}
                             src={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format`}
-                            height="auto"
-                            width="100%"
+                            // height="auto"
+                            // width="100%"
                             srcSet={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                             alt={playlist.name}
                             loading="lazy"
                             longdesc={playlist.id}
                         />
                     </div>
-                    <ImageListItemBar
-                        title={playlist.name}         
-                        subtitle={playlist.owner.display_name}
-                        actionIcon={
-                        <IconButton
-                            sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                            aria-label={`info about ${playlist.name}`}
-                        >
-                        </IconButton>
-                        }
-                    />
+                    <div className={classes.textContainer} >
+                        <ImageListItemBar
+                            title={playlist.name}         
+                            subtitle={playlist.owner.display_name}
+                            actionIcon={
+                            <IconButton
+                                sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
+                                aria-label={`info about ${playlist.name}`}
+                            >
+                            </IconButton>
+                            }
+                        />
+                    </div>
                 </ImageListItem>
             ))}
         </ImageList>

@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 
 // Setting the spotifyApi, so that we can use it's functions
 const spotifyApi = new SpotifyWebApi({
-  clientId: "7b215911d14245089d73d78055353cb2",
+    clientId: process.env.REACT_APP_CLIENT_ID,
 });
 
 
@@ -60,6 +60,7 @@ const Dashboard = ({ code }) => {
     // console.log(code)
     const accessToken = useAuth(code);
     //console.log(accessToken)
+    spotifyApi.setAccessToken(accessToken);
     
     const [userInfo, setUserInfo] = useState({
         name: '',
@@ -103,14 +104,13 @@ const Dashboard = ({ code }) => {
         const timeoutID = setTimeout(() => {
 
             // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
-            spotifyApi.setAccessToken(accessToken);
+            // spotifyApi.setAccessToken(accessToken);
 
             if (!activeDevice) {
                 // Get a User's Available Devices
                 spotifyApi.getMyDevices()
                 .then(function(data) {
                     let availableDevices = data.body.devices;
-                    console.log(availableDevices);
                     if (availableDevices.length > 0) {
                         setActiveDevice(true)
                     }
@@ -381,7 +381,7 @@ const Dashboard = ({ code }) => {
             if (!accessToken || !currentTrack) return;
             
             // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
-            spotifyApi.setAccessToken(accessToken);
+            // spotifyApi.setAccessToken(accessToken);
             
             await axios({
                 url: `https://api.spotify.com/v1/me/player/queue?uri=${currentTrack}`,
@@ -415,12 +415,12 @@ const Dashboard = ({ code }) => {
         if (!accessToken) return;
 
         // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again. 
-        spotifyApi.setAccessToken(accessToken);
+        // spotifyApi.setAccessToken(accessToken);
 
         // Get user details with help of getMe() function
         spotifyApi.getMe()
         .then(data => {
-        // update the state of user info
+            // update the state of user info
             setUserInfo({
                 name: data.body.display_name,
                 email: data.body.email,
@@ -469,6 +469,9 @@ const Dashboard = ({ code }) => {
                 
             });
         })
+        .catch(function(error) {
+            console.log(error)
+        });
         
     }, [accessToken, currentPlaylist]);
 
