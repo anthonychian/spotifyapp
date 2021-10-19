@@ -15,7 +15,7 @@ const Widget = styled('div')(() => ({
     minWidth: 250,
     margin: 'auto',
     position: 'relative',
-    zIndex: 7,
+    zIndex: 0,
     backgroundColor: 'rgba(0,0,0,0.6)',
     backdropFilter: 'blur(40px)',
     opacity: '70%',

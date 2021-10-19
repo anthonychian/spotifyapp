@@ -29,9 +29,10 @@ const useStyles = makeStyles(theme => ({
       justifyContent: 'center',
     },
     body: {
-        zIndex: "1",
+        zIndex: "0",
         backgroundColor: '#191414',
-        height: '110vh',
+        height: '100vh',
+        minHeight: "800px",
         background: 'linear-gradient(rgba(0,0,0,0.8),transparent)',
     },
     avatar: {
@@ -525,14 +526,16 @@ const Dashboard = ({ code }) => {
     
     <div ref={backgroundColor} className={classes.body}>
         
-        <div style={{display: loading ? "none" : "block"}} className={classes.bubbles}>
-            <MyBubbles/>
+        <div style={{"height":"100%",display: loading ? "none" : "block"}} className={classes.bubbles}>
+            <MyBubbles />
         </div>
         {nowPlaying.image && <div style={{"height":"100vh", display: loading ? "none" : "block"}}>
-            <div className={classes.avatar}>
-                <AccountMenu name={userInfo.name} src={userInfo.profile_pic} />
-            </div>
-            <div>
+            
+            
+                
+                <div className={classes.avatar}>
+                    <AccountMenu name={userInfo.name} src={userInfo.profile_pic} />
+                </div>
                 
                 <Marquee className={classes.trackInfoContainer} gradient={false} speed={40}>
                     <TrackInfo nowPlaying={nowPlaying} />
@@ -559,7 +562,7 @@ const Dashboard = ({ code }) => {
                         <MySlider setCurrentPosition={setCurrentPosition} currentPosition={currentPosition}/>
                     </div>
                 </div>
-            </div>
+            
             
             
 

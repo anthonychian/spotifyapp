@@ -14,14 +14,14 @@ const useStyles = makeStyles(theme => ({
         // ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
         // //   width: '92vw',
         // },
-        ['@media (max-height:780px)']: { // eslint-disable-line no-useless-computed-key
-            marginTop: 400,
+        // ['@media (max-height:780px)']: { // eslint-disable-line no-useless-computed-key
+        //     marginTop: 400,
             
-        },
-        ['@media (min-height:780px)']: { // eslint-disable-line no-useless-computed-key
-            marginTop: 200,
-            // width: 687.59
-        },
+        // },
+        // ['@media (min-height:780px)']: { // eslint-disable-line no-useless-computed-key
+        //     marginTop: 200,
+        //     // width: 687.59
+        // },
     },
     textContainer: {
         height: "auto",

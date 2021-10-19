@@ -13,7 +13,7 @@ import RepeatOneIcon from '@mui/icons-material/RepeatOne';
 const mainIconColor = 'white'
 export default function PlayerButtons(props) {
     return (
-        <div style={{"zIndex": "5"}}>
+        <div style={{"zIndex": "0"}}>
             <IconButton 
                 sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
