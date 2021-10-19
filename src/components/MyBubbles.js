@@ -5,7 +5,7 @@ export default function MyBubbles() {
     return (
         <div style={{ height: "100%", width: "100%", position: "absolute" }}>
             <Particles
-                height="100vh"
+                height="110vh"
                 width="100vw"
                 params={{
                     "particles": {

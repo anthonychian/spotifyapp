@@ -17,7 +17,7 @@ import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles'
 import Stack from '@mui/material/Stack';
 import CircularProgress from '@mui/material/CircularProgress';
-// import Marquee from 'react-fast-marquee'
+import Marquee from 'react-fast-marquee'
 
 
 
@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
     body: {
         zIndex: "1",
         backgroundColor: '#191414',
+        height: '110vh',
         background: 'linear-gradient(rgba(0,0,0,0.8),transparent)',
     },
     avatar: {
@@ -41,7 +42,23 @@ const useStyles = makeStyles(theme => ({
         height: "100vh",
         width: "100vw",
         position: "absolute"
-    }
+    },
+    trackInfoContainer: {
+        margin: 'auto',
+        ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+          width: '90%',
+          fontSize: '0.7em',
+          paddingTop: 50,
+        },
+        ['@media (min-width:480px)']: { // eslint-disable-line no-useless-computed-key
+            width: 417.59,
+            paddingTop: 50,
+        },
+        ['@media (min-width:1282px)']: { // eslint-disable-line no-useless-computed-key
+            width: '33%',
+            paddingTop: 0,
+        }
+      }
   }))
   
 
@@ -517,9 +534,9 @@ const Dashboard = ({ code }) => {
             </div>
             <div>
                 
-                {/* <Marquee style={{"width": "30%", "margin": "auto"}} gradient={false} speed={40}> */}
+                <Marquee className={classes.trackInfoContainer} gradient={false} speed={40}>
                     <TrackInfo nowPlaying={nowPlaying} />
-                {/* </Marquee> */}
+                </Marquee>
                 
                 
 

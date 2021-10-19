@@ -11,17 +11,17 @@ const useStyles = makeStyles(theme => ({
         // height: 'auto',
         marginTop: 200,
         
-        ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
-          width: '92vw',
+        // ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+        // //   width: '92vw',
+        // },
+        ['@media (max-height:780px)']: { // eslint-disable-line no-useless-computed-key
+            marginTop: 400,
+            
         },
-        // ['@media (max-width:780px)']: { // eslint-disable-line no-useless-computed-key
-        //     marginTop: 400,
-        //     width: "90vw"
-        // },
-        // ['@media (min-height:780px)']: { // eslint-disable-line no-useless-computed-key
-        //     marginTop: 200,
-        //     width: 687.59
-        // },
+        ['@media (min-height:780px)']: { // eslint-disable-line no-useless-computed-key
+            marginTop: 200,
+            // width: 687.59
+        },
     },
     textContainer: {
         height: "auto",
