@@ -201,6 +201,7 @@ const Dashboard = ({ code }) => {
                         res.data?.item?.artists.map((x) => (
                             allArtists += ` ${x.name}, `
                         ))
+                        allArtists = allArtists.slice(0, allArtists.length - 2)
                     }
 
                     setCurrentPosition({
@@ -449,9 +450,13 @@ const Dashboard = ({ code }) => {
                             userPlaylist.body.tracks.items.forEach((song) => {
                                 // update tracks state with name and image for each track
                                 let allArtists = ''
-                                song.track.artists.map((x) => (
-                                    allArtists += `${x.name}, `
-                                ))
+                                if (song?.track?.artists) {
+                                    song.track.artists.map((x) => (
+                                        allArtists += `${x.name}, `
+                                    ))
+                                    allArtists = allArtists.slice(0, allArtists.length - 2)
+                                }
+
                                 setTracks(tracks => [
                                     ...tracks, {
                                         name: song.track.name,
