@@ -642,7 +642,7 @@ const Dashboard = ({ props, code }) => {
                         <div style={{ position: 'relative', display: 'runIn', marginLeft: '1em'}}>
                           <span style={{
                             position: 'absolute', 
-                            width: '250px',
+                            width: '220px',
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
@@ -652,7 +652,7 @@ const Dashboard = ({ props, code }) => {
                           <br/>
                           <span style={{
                             position: 'absolute', 
-                            width: '250px',
+                            width: '220px',
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
@@ -662,12 +662,12 @@ const Dashboard = ({ props, code }) => {
                           </span>
                         </div>
                       </Typography>
-                      <div style={{position: 'relative', width: '100%',textAlign: 'right'}}>
+                      {/* <div style={{position: 'relative', width: '100%',textAlign: 'right'}}>
                         <span style={{cursor: 'pointer'}} onClick={clickScrollUp}>
                         </span>
-                      </div>
-                      <div style={{ height: '100%', width: '3em',cursor: 'pointer', marginLeft: 'auto'}} onClick={clickScrollUp}>
-                        <div style={{position: 'absolute', top: '40%'}}>
+                      </div> */}
+                      <div style={{ position: 'relative', height: '100%', width: '4em',cursor: 'pointer', marginLeft: 'auto'}} onClick={clickScrollUp}>
+                        <div style={{position: 'absolute', paddingLeft: '50%', top: '40%'}}>
                           <KeyboardArrowUpIcon />
                         </div>
                       </div>
