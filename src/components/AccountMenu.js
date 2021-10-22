@@ -4,6 +4,8 @@ import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import BlurOnIcon from '@mui/icons-material/BlurOn';
+import BlurOffIcon from '@mui/icons-material/BlurOff';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -84,8 +86,23 @@ export default function AccountMenu(props) {
         <MenuItem>
         <Avatar alt={props.name} src={props.src} sx={{ width: 32, height: 32 }}/> Profile
         </MenuItem>
-        <MenuItem>
-          <Avatar /> My account
+        <MenuItem
+          onClick={(e) => {
+              props.setParticlesOn(!props.particlesOn)
+          }}>
+          {props.particlesOn && <div>
+            <BlurOffIcon />
+            <span style={{marginLeft: "1em"}}>
+              Particles off
+            </span>
+          </div>}
+          {!props.particlesOn && <div>
+            <BlurOnIcon />
+            <span style={{marginLeft: "1em"}}>
+              Particles on
+            </span>
+          </div>}
+            
         </MenuItem>
         <Divider />
         <MenuItem>

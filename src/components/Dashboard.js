@@ -95,6 +95,7 @@ const Dashboard = ({ code }) => {
   const [activeDevice, setActiveDevice] = useState(false);
   const [currentPosition, setCurrentPosition] = useState({});
   const [spinner, setSpinner] = useState(0);
+  const [particlesOn, setParticlesOn] = useState(true);
   const [shuffle, setShuffle] = useState({});
   const [repeatSong, setRepeatSong] = useState({
     repeatOff: true,
@@ -231,9 +232,9 @@ const Dashboard = ({ code }) => {
                 onChange: false,
               });
 
-              // nowPlaying.name !== res.data.item.name
 
               if (nowPlaying.name !== res.data.item.name) {
+                console.log(res)
                 setNowPlaying({
                   name: res.data.item.name,
                   artist: allArtists,
@@ -549,11 +550,13 @@ const Dashboard = ({ code }) => {
                 style={{ height: "100%"}}
                 className={classes.bubbles}
                 >
-                    <MyBubbles />
+                    <MyBubbles particlesOn={particlesOn}/>
                 </div>
 
                 <div className={classes.avatar}>
-                    <AccountMenu name={userInfo.name} src={userInfo.profile_pic} />
+                    <AccountMenu name={userInfo.name} src={userInfo.profile_pic} 
+                      particlesOn={particlesOn} setParticlesOn={setParticlesOn}
+                    />
                 </div>
 
                 <Marquee
