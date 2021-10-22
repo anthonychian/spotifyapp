@@ -666,7 +666,11 @@ const Dashboard = ({ props, code }) => {
                         <span style={{cursor: 'pointer'}} onClick={clickScrollUp}>
                         </span>
                       </div>
-                      <KeyboardArrowUpIcon style={{cursor: 'pointer', marginLeft: 'auto'}} onClick={clickScrollUp}/>
+                      <div style={{ height: '100%', width: '3em',cursor: 'pointer', marginLeft: 'auto'}} onClick={clickScrollUp}>
+                        <div style={{position: 'absolute', top: '40%'}}>
+                          <KeyboardArrowUpIcon />
+                        </div>
+                      </div>
                     </Toolbar>
                   </AppBar>
                 </HideOnScroll>}
