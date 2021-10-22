@@ -46,6 +46,18 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     padding: "1em 0 0 1em",
+    ['@media (max-width:1282px)']: { // eslint-disable-line no-useless-computed-key
+      display: 'none',
+    }
+  },
+  avatar2: {
+    display: "none",
+    ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+      marginBottom: '5em',
+      display: 'flex',
+      alignItems: "center",
+      justifyContent: "center",
+    }
   },
   bubbles: {
     zIndex: "0",
@@ -601,12 +613,12 @@ const Dashboard = ({ props, code }) => {
     <div>
         <div 
             style={{
-                display: !loading && activeDevice ? "block" : "none",
+                display: !loading && activeDevice && nowPlaying.image ? "block" : "none",
             }}
             ref={backgroundColor}  
             className={classes.body}>
-            {nowPlaying.image && (
-            <div>
+            
+            {nowPlaying.image && <div>
                 <div
                 style={{ height: "100%"}}
                 className={classes.bubbles}
@@ -622,9 +634,11 @@ const Dashboard = ({ props, code }) => {
                 {(document.documentElement.scrollTop !== 0) && <HideOnScroll {...props}>
                   <AppBar className={classes.bottomBar} sx={{ top: 'auto', bottom: 0}}>
                     <Toolbar>
+                      <img alt= {nowPlaying.name} src={nowPlaying.imageLow}/>
                       <Typography variant="h7" component="div">
-                        <div style={{position: 'absolute'}}>
-                          {nowPlaying.name} - {nowPlaying.artist}
+                        <div style={{marginLeft: '1em'}}>
+                          <span> {nowPlaying.name} </span>
+                          <span style={{color: 'grey', fontSize: '0.8em'}}> {nowPlaying.artist} </span>
                         </div>
                       </Typography>
                       <div style={{position: 'relative', width: '100%',textAlign: 'right'}}>
@@ -666,11 +680,11 @@ const Dashboard = ({ props, code }) => {
                     />
                 </div>
                 </div>
-            </div>
-            )}
+            </div>}
+            
         </div>
 
-        {nowPlaying && (
+        {nowPlaying &&
             <div
             style={{
                 display: loading ? "flex" : "none",
@@ -684,14 +698,18 @@ const Dashboard = ({ props, code }) => {
                 <CircularProgress size={"5em"} />
             </Stack>
             </div>
-        )}
+        }
 
-          {nowPlaying && (
+          {nowPlaying && 
             <div
             style={{
                 display: loading ? "none" : "block",
             }}
-            >
+            >   <div className={classes.avatar2}>
+                  <AccountMenu name={userInfo.name} src={userInfo.profile_pic} 
+                    particlesOn={particlesOn} setParticlesOn={setParticlesOn}
+                  />
+                </div>
                 <div className={classes.alignItemsAndJustifyContent}>
                     <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist} currentPlaylistName={currentPlaylistName}/>
                 </div>
@@ -709,7 +727,7 @@ const Dashboard = ({ props, code }) => {
                     />
                 </div>
             </div>
-          )}
+          }
 
     </div>
   );
