@@ -42,7 +42,11 @@ const useStyles = makeStyles((theme) => ({
     background: "linear-gradient(rgba(0,0,0,0.8),transparent)",
   },
   bottomBar: {
+    height: '10%',
     backgroundColor: '#191414!important',
+    ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+      height: '15%',
+    }
   },
   avatar: {
     padding: "1em 0 0 1em",
@@ -633,7 +637,7 @@ const Dashboard = ({ props, code }) => {
                 {(document.documentElement.scrollTop !== 0) && <HideOnScroll {...props}>
                   <AppBar className={classes.bottomBar} sx={{ top: 'auto', bottom: 0}}>
                     <Toolbar>
-                      <img alt= {nowPlaying.name} src={nowPlaying.imageLow}/>
+                      <img style={{marginTop: '10px'}}alt= {nowPlaying.name} src={nowPlaying.imageLow}/>
                       <Typography variant="h7" component="div">
                         <div style={{ position: 'relative', display: 'runIn', marginLeft: '1em'}}>
                           <span style={{
