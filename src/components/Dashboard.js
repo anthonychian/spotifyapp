@@ -53,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
   avatar2: {
     display: "none",
     ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
-      marginBottom: '5em',
       display: 'flex',
       alignItems: "center",
       justifyContent: "center",
@@ -636,14 +635,31 @@ const Dashboard = ({ props, code }) => {
                     <Toolbar>
                       <img alt= {nowPlaying.name} src={nowPlaying.imageLow}/>
                       <Typography variant="h7" component="div">
-                        <div style={{marginLeft: '1em'}}>
-                          <span> {nowPlaying.name} </span>
-                          <span style={{color: 'grey', fontSize: '0.8em'}}> {nowPlaying.artist} </span>
+                        <div style={{ position: 'relative', display: 'runIn', marginLeft: '1em'}}>
+                          <span style={{
+                            position: 'absolute', 
+                            width: '250px',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            fontSize: '0.9em'}}> 
+                              {nowPlaying.name}
+                          </span>
+                          <br/>
+                          <span style={{
+                            position: 'absolute', 
+                            width: '250px',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            color: 'grey', 
+                            fontSize: '0.8em'}}> 
+                              {nowPlaying.artist} 
+                          </span>
                         </div>
                       </Typography>
                       <div style={{position: 'relative', width: '100%',textAlign: 'right'}}>
                         <span style={{cursor: 'pointer'}} onClick={clickScrollUp}>
-                          Top
                         </span>
                       </div>
                       <KeyboardArrowUpIcon style={{cursor: 'pointer', marginLeft: 'auto'}} onClick={clickScrollUp}/>
@@ -706,6 +722,7 @@ const Dashboard = ({ props, code }) => {
                 display: loading ? "none" : "block",
             }}
             >   <div className={classes.avatar2}>
+                  <div style={{marginTop: '5em'}}></div>
                   <AccountMenu name={userInfo.name} src={userInfo.profile_pic} 
                     particlesOn={particlesOn} setParticlesOn={setParticlesOn}
                   />
