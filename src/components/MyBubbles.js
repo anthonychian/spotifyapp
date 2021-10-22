@@ -9,7 +9,7 @@ export default function MyBubbles(props) {
                     style={{
                         minHeight: "800px",
                     }}
-                    width="100vw"
+                    width="100%"
                     height="100vh"
                     params={{
                         "particles": {

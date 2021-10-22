@@ -38,6 +38,17 @@ const useStyles = makeStyles(theme => ({
         },
         
     },
+    imgContainerClicked: {
+        overflow: 'hidden',
+        height: "20vw",
+        width: "20vw",
+        cursor: 'cursor',
+        ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+            width: '30vw',
+            height: '30vw',
+        },
+        
+    },
     img: {
         height: "100%",
         minWidth: "100%",
@@ -50,19 +61,33 @@ export default function MyPlaylists(props) {
     return (
         <ImageList className={classes.container} cols={3}>
             {props.playlists.map((playlist) => (
-                <ImageListItem onClick={props.clickPlaylist} key={playlist.id}>
-                    <div className={classes.imgContainer} >
+                <ImageListItem 
+                // onClick= {props.clickPlaylist} key={playlist.id}
+                onClick={(e) => {
+                    props.clickPlaylist(e)
+                }} key={playlist.id}>
+                    {(playlist.name !== props.currentPlaylistName) && 
+                    <div className={classes.imgContainer}>
                         <img
                             className={classes.img}
                             src={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format`}
-                            // height="auto"
-                            // width="100%"
                             srcSet={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                             alt={playlist.name}
                             loading="lazy"
                             longdesc={playlist.id}
                         />
-                    </div>
+                    </div>}
+                    {(playlist.name === props.currentPlaylistName) && 
+                    <div className={classes.imgContainerClicked}>
+                        <img
+                            className={classes.img}
+                            src={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format`}
+                            srcSet={`${playlist.images[0].url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                            alt={playlist.name}
+                            loading="lazy"
+                            longdesc={playlist.id}
+                        />
+                    </div>}
                     <div className={classes.textContainer} >
                         <ImageListItemBar
                             title={playlist.name}         

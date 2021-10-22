@@ -42,7 +42,6 @@ export default function MyTracks(props) {
                                     imageHigh: track.imageHigh,
                                     imageLow: track.imageLow
                                 });
-                                window.scrollTo(0,0) 
                             }} 
                             key = {track.id + '000' + idx}>
                             

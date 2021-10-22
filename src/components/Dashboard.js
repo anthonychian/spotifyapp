@@ -19,6 +19,14 @@ import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 import Marquee from "react-fast-marquee";
 
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import useScrollTrigger from '@mui/material/useScrollTrigger';
+import Slide from '@mui/material/Slide';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
+
 const useStyles = makeStyles((theme) => ({
   alignItemsAndJustifyContent: {
     display: "flex",
@@ -29,8 +37,12 @@ const useStyles = makeStyles((theme) => ({
     zIndex: "0",
     backgroundColor: "#191414",
     height: "100vh",
+    width: "100vw",
     minHeight: "900px",
     background: "linear-gradient(rgba(0,0,0,0.8),transparent)",
+  },
+  bottomBar: {
+    backgroundColor: '#191414!important',
   },
   avatar: {
     padding: "1em 0 0 1em",
@@ -65,10 +77,26 @@ const spotifyApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_CLIENT_ID,
 });
 
-const Dashboard = ({ code }) => {
+function HideOnScroll(props) {
+  const { children, window } = props;
+  // Note that you normally won't need to set the window ref as useScrollTrigger
+  // will default to window.
+  // This is only being set here because the demo is in an iframe.
+  const trigger = useScrollTrigger({
+    target: window ? window() : undefined,
+  });
+
+  return (
+    <Slide appear={false} direction="up" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
+
+const Dashboard = ({ props, code }) => {
   const classes = useStyles();
 
-  const backgroundColor = useRef(0);
+  const backgroundColor = useRef(null);
 
   // console.log(code)
   const accessToken = useAuth(code);
@@ -132,126 +160,127 @@ const Dashboard = ({ code }) => {
           }
         );
       }
+      if (activeDevice) {
+        spotifyApi.getMyCurrentPlaybackState().then(
+          function (data) {
+            // console.log(data.body)
+            // Output items
+            if (data.body) {
+              if (data.body.is_playing) {
+                // set pause/play button to correctly display current state
+                if (paused.paused == null || paused.paused === true)
+                  setPaused({
+                    paused: false,
+                    clicked: false,
+                  });
+              } else {
+                if (paused.paused == null || paused.paused === false)
+                  setPaused({
+                    paused: true,
+                    clicked: false,
+                  });
+              }
 
-      spotifyApi.getMyCurrentPlaybackState().then(
-        function (data) {
-          // console.log(data.body)
-          // Output items
-          if (data.body) {
-            if (data.body.is_playing) {
-              // set pause/play button to correctly display current state
-              if (paused.paused == null || paused.paused === true)
-                setPaused({
-                  paused: false,
-                  clicked: false,
-                });
-            } else {
-              if (paused.paused == null || paused.paused === false)
-                setPaused({
-                  paused: true,
-                  clicked: false,
-                });
+              if (data.body.shuffle_state === false) {
+                if (shuffle == null || shuffle === true) {
+                  setShuffle({
+                    shuffle: false,
+                    clicked: false,
+                  });
+                }
+              } else {
+                if (shuffle == null || shuffle === false) {
+                  setShuffle({
+                    shuffle: true,
+                    clicked: false,
+                  });
+                }
+              }
+
+              if (data.body.repeat_state === "off") {
+                if (
+                  repeatSong.repeatOff == null ||
+                  repeatSong.repeatOff !== true
+                ) {
+                  setRepeatSong({
+                    repeatOff: true,
+                    repeatContext: false,
+                    repeatTrack: false,
+                    clicked: false,
+                  });
+                }
+              } else if (data.body.repeat_state === "context") {
+                if (
+                  repeatSong.repeatContext == null ||
+                  repeatSong.repeatContext !== true
+                ) {
+                  setRepeatSong({
+                    repeatOff: false,
+                    repeatContext: true,
+                    repeatTrack: false,
+                    clicked: false,
+                  });
+                }
+              } else if (data.body.repeat_state === "track") {
+                if (
+                  repeatSong.repeatTrack == null ||
+                  repeatSong.repeatTrack !== true
+                ) {
+                  setRepeatSong({
+                    repeatOff: false,
+                    repeatContext: false,
+                    repeatTrack: true,
+                    clicked: false,
+                  });
+                }
+              }
             }
 
-            if (data.body.shuffle_state === false) {
-              if (shuffle == null || shuffle === true) {
-                setShuffle({
-                  shuffle: false,
-                  clicked: false,
-                });
-              }
-            } else {
-              if (shuffle == null || shuffle === false) {
-                setShuffle({
-                  shuffle: true,
-                  clicked: false,
-                });
-              }
-            }
-
-            if (data.body.repeat_state === "off") {
-              if (
-                repeatSong.repeatOff == null ||
-                repeatSong.repeatOff !== true
-              ) {
-                setRepeatSong({
-                  repeatOff: true,
-                  repeatContext: false,
-                  repeatTrack: false,
-                  clicked: false,
-                });
-              }
-            } else if (data.body.repeat_state === "context") {
-              if (
-                repeatSong.repeatContext == null ||
-                repeatSong.repeatContext !== true
-              ) {
-                setRepeatSong({
-                  repeatOff: false,
-                  repeatContext: true,
-                  repeatTrack: false,
-                  clicked: false,
-                });
-              }
-            } else if (data.body.repeat_state === "track") {
-              if (
-                repeatSong.repeatTrack == null ||
-                repeatSong.repeatTrack !== true
-              ) {
-                setRepeatSong({
-                  repeatOff: false,
-                  repeatContext: false,
-                  repeatTrack: true,
-                  clicked: false,
-                });
-              }
-            }
-          }
-
-          axios({
-            url: `https://api.spotify.com/v1/me/player/currently-playing`,
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          })
-            .then(function (res) {
-              let allArtists = " ";
-              if (res.data?.item?.artists) {
-                res.data?.item?.artists.map(
-                  (x) => (allArtists += ` ${x.name}, `)
-                );
-                allArtists = allArtists.slice(0, allArtists.length - 2);
-              }
-
-              setCurrentPosition({
-                position: res.data.progress_ms,
-                total: res.data.item.duration_ms,
-                onChange: false,
-              });
-
-
-              if (nowPlaying.name !== res.data.item.name) {
-                console.log(res)
-                setNowPlaying({
-                  name: res.data.item.name,
-                  artist: allArtists,
-                  image: res.data.item.album.images[1].url,
-                  imageHigh: res.data.item.album.images[0].url,
-                  imageLow: res.data.item.album.images[2].url,
-                });
-              }
+            axios({
+              url: `https://api.spotify.com/v1/me/player/currently-playing`,
+              method: "GET",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
             })
-            .catch(function (error) {
-              console.log(error);
-            });
-        },
-        function (err) {
-          console.log("Something went wrong!", err);
-        }
-      );
+              .then(function (res) {
+                let allArtists = " ";
+                if (res.data?.item?.artists) {
+                  res.data?.item?.artists.map(
+                    (x) => (allArtists += ` ${x.name}, `)
+                  );
+                  allArtists = allArtists.slice(0, allArtists.length - 2);
+                }
+
+                setCurrentPosition({
+                  position: res.data.progress_ms,
+                  total: res.data.item.duration_ms,
+                  onChange: false,
+                });
+
+
+                if (nowPlaying.name !== res.data.item.name) {
+
+                  setNowPlaying({
+                    name: res.data.item.name,
+                    artist: allArtists,
+                    image: res.data.item.album.images[1].url,
+                    imageHigh: res.data.item.album.images[0].url,
+                    imageLow: res.data.item.album.images[2].url,
+                  });
+                }
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+          },
+          function (err) {
+            console.log("Something went wrong!", err);
+          }
+        );
+      }
     }, 1000);
     return () => clearTimeout(timeoutID);
   });
@@ -512,7 +541,34 @@ const Dashboard = ({ code }) => {
       });
   }, [accessToken, currentPlaylist]);
 
+  function clickScrollUp() {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant'
+    });
+  }
+
   function clickSong(event, song) {
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'instant'
+    });
+    if (!activeDevice) {
+      // Get a User's Available Devices
+      spotifyApi.getMyDevices().then(
+        function (data) {
+          let availableDevices = data.body.devices;
+          if (availableDevices.length > 0) {
+            setActiveDevice(true);
+          }
+        },
+        function (err) {
+          console.log("Something went wrong!", err);
+        }
+      );
+    }
     if (nowPlaying.name !== event.target.getAttribute("alt")) {
       setCurrentTrack(event.target.getAttribute("longdesc"));
       setNowPlaying({
@@ -525,7 +581,12 @@ const Dashboard = ({ code }) => {
     }
   }
   function clickPlaylist(e) {
-    if (e.target.getAttribute("alt") !== currentPlaylistName) {
+    if (e.target.getAttribute("alt") !== null && (e.target.getAttribute("alt") !== currentPlaylistName)) {
+      window.scrollTo({
+        top: document.body.scrollHeight || document.documentElement.scrollHeight,
+        left: document.body.scrollHeight || document.documentElement.scrollHeight,
+        behavior: 'smooth'
+      });
       setCurrentPlaylistName(e.target.getAttribute("alt"));
       setCurrentPlaylist(e.target.getAttribute("longdesc"));
       setTracks([]);
@@ -558,6 +619,23 @@ const Dashboard = ({ code }) => {
                       particlesOn={particlesOn} setParticlesOn={setParticlesOn}
                     />
                 </div>
+                {(document.documentElement.scrollTop !== 0) && <HideOnScroll {...props}>
+                  <AppBar className={classes.bottomBar} sx={{ top: 'auto', bottom: 0}}>
+                    <Toolbar>
+                      <Typography variant="h7" component="div">
+                        <div style={{position: 'absolute'}}>
+                          {nowPlaying.name} - {nowPlaying.artist}
+                        </div>
+                      </Typography>
+                      <div style={{position: 'relative', width: '100%',textAlign: 'right'}}>
+                        <span style={{cursor: 'pointer'}} onClick={clickScrollUp}>
+                          Top
+                        </span>
+                      </div>
+                      <KeyboardArrowUpIcon style={{cursor: 'pointer', marginLeft: 'auto'}} onClick={clickScrollUp}/>
+                    </Toolbar>
+                  </AppBar>
+                </HideOnScroll>}
 
                 <Marquee
                 className={classes.trackInfoContainer}
@@ -608,14 +686,14 @@ const Dashboard = ({ code }) => {
             </div>
         )}
 
-        {nowPlaying && (
+          {nowPlaying && (
             <div
             style={{
                 display: loading ? "none" : "block",
             }}
             >
                 <div className={classes.alignItemsAndJustifyContent}>
-                    <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist} />
+                    <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist} currentPlaylistName={currentPlaylistName}/>
                 </div>
 
                 {/* <Marquee style={{"width": "40%", "margin": "auto"}}gradient={false} speed={40}> */}
@@ -631,7 +709,7 @@ const Dashboard = ({ code }) => {
                     />
                 </div>
             </div>
-        )}
+          )}
 
     </div>
   );
