@@ -45,7 +45,7 @@ export default function MyTracks(props) {
                             }} 
                             key = {track.id + '000' + idx}>
                             
-                            {!props.activeDevice && <a href={track.link}>
+                            {/* {!props.activeDevice && <a href={track.link}>
                                 <img
                                     src={`${track.imageLow}`}
                                     srcSet={`${track.image} 1x, ${track.imageHigh} 2x`}
@@ -55,8 +55,8 @@ export default function MyTracks(props) {
                                     longdesc={track.link}
                                     loading="lazy"
                                 />
-                            </a>}
-                            {props.activeDevice && <div style={{ cursor: 'pointer' }}>
+                            </a>} */}
+                            <div style={{ cursor: 'pointer' }}>
                                 <img
                                     src={`${track.imageLow}`}
                                     srcSet={`${track.image} 1x, ${track.imageHigh} 2x`}
@@ -66,7 +66,7 @@ export default function MyTracks(props) {
                                     longdesc={track.link}
                                     loading="lazy"
                                 />
-                            </div>}
+                            </div>
                             <ImageListItemBar
                                 title={track.name}         
                                 subtitle={track.artist}

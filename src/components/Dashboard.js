@@ -113,11 +113,6 @@ const Dashboard = ({ props, code }) => {
 
   const backgroundColor = useRef(null);
 
-  // console.log(code)
-  const accessToken = useAuth(code);
-  //console.log(accessToken)
-  spotifyApi.setAccessToken(accessToken);
-
   const [userInfo, setUserInfo] = useState({
     name: "",
     email: "",
@@ -147,6 +142,80 @@ const Dashboard = ({ props, code }) => {
     clicked: false,
   });
 
+  const [scriptLoading, setScriptLoading] = useState(true);
+
+  const accessToken = useAuth(code);
+  spotifyApi.setAccessToken(accessToken);
+
+
+  useEffect(() => {
+    
+    function spotifyPlayback() {
+      if(scriptLoading){
+        const script = document.createElement("script");
+        script.src = "https://sdk.scdn.co/spotify-player.js";
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+        setScriptLoading(false);
+      }
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        const player = new window.Spotify.Player({
+          name: 'Spotify Web Player',
+          getOAuthToken: callback => {
+            callback(accessToken);
+          },
+          volume: 0.5
+        });
+        // Error handling
+        player.addListener('initialization_error', ({ message }) => { console.error(message); });
+        player.addListener('authentication_error', ({ message }) => { console.error(message); });
+        player.addListener('account_error', ({ message }) => { console.error(message); });
+        player.addListener('playback_error', ({ message }) => { console.error(message); });
+      
+        // Playback status updates
+        //player.addListener('player_state_changed', state => { console.log(state); });
+      
+        // Ready
+        player.addListener('ready', ({ device_id }) => {
+          //console.log('Ready with Device ID', device_id);
+          
+          spotifyApi.transferMyPlayback([device_id])
+          .then(function() {
+            //console.log('Transfering playback to ' + device_id);
+          }, function(err) {
+            //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+            console.log('Something went wrong!', err);
+          });
+        });
+      
+        // Not Ready
+        player.addListener('not_ready', ({ device_id }) => {
+          console.log('Device ID has gone offline', device_id);
+        });
+      
+        player.connect().then(success => {
+          if (success) {
+            console.log('The Web Playback SDK successfully connected to Spotify!');
+          }
+          else {
+            console.log('The Web Playback SDK did not connect')
+          }
+        })
+        
+  
+      };
+    }
+    if (accessToken === undefined) {
+      //console.log('token N/A')
+    }
+    else {
+      spotifyPlayback();
+    }
+    
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken]);
+
   // delay to display loading for a few seconds
   useEffect(() => {
     const timeoutID = setTimeout(() => {
@@ -157,6 +226,7 @@ const Dashboard = ({ props, code }) => {
 
   // keeps track of current song (runs every 1 second)
   useEffect(() => {
+
     const timeoutID = setTimeout(() => {
       // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again.
       // spotifyApi.setAccessToken(accessToken);
@@ -623,8 +693,8 @@ const Dashboard = ({ props, code }) => {
             
             {nowPlaying.image && <div>
                 <div
-                style={{ height: "100%"}}
-                className={classes.bubbles}
+                  style={{ height: "100%"}}
+                  className={classes.bubbles}
                 >
                     <MyBubbles particlesOn={particlesOn}/>
                 </div>
