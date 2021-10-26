@@ -125,6 +125,7 @@ const Dashboard = ({ props, code }) => {
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState("");
   const [currentPlaylist, setCurrentPlaylist] = useState("");
+  const [currentPlaylistURI, setCurrentPlaylistURI] = useState("")
   const [currentPlaylistName, setCurrentPlaylistName] = useState("");
   const [nowPlaying, setNowPlaying] = useState({});
   const [paused, setPaused] = useState({});
@@ -178,7 +179,7 @@ const Dashboard = ({ props, code }) => {
       
         // Ready
         player.addListener('ready', ({ device_id }) => {
-          //console.log('Ready with Device ID', device_id);
+          console.log('Ready with Device ID', device_id);
           
           spotifyApi.transferMyPlayback([device_id])
           .then(function() {
@@ -530,29 +531,16 @@ const Dashboard = ({ props, code }) => {
       // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again.
       // spotifyApi.setAccessToken(accessToken);
 
-      await axios({
-        url: `https://api.spotify.com/v1/me/player/queue?uri=${currentTrack}`,
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-        .then(function (response) {
-          // console.log("#1 added to queue");
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-      spotifyApi.skipToNext().then(
+      // Start/Resume a User's Playback
+      spotifyApi.play({
+        "uris": [currentTrack]
+      }).then(
         function () {
-          // console.log('#2 Skip to next');
+          //console.log('Playback started');
         },
-        function (error) {
+        function (err) {
           //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-          console.log(error);
+          console.log("Something went wrong!", err);
         }
       );
     }
@@ -587,9 +575,11 @@ const Dashboard = ({ props, code }) => {
           if (userPlaylists.body.items.length > 0) {
             // update the state of playlists once
             setPlaylists(userPlaylists.body.items);
+            //console.log(userPlaylists.body.items)
 
             if (!currentPlaylist) {
               setCurrentPlaylist(userPlaylists.body.items[0].id);
+              // setCurrentPlaylistURI(userPlaylists.body.items[0].uri)
               setCurrentPlaylistName(userPlaylists.body.items[0].name);
             } else {
               spotifyApi.getPlaylist(currentPlaylist).then((userPlaylist) => {
@@ -635,11 +625,7 @@ const Dashboard = ({ props, code }) => {
   }
 
   function clickSong(event, song) {
-    window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'instant'
-    });
+    clickScrollUp()
     if (!activeDevice) {
       // Get a User's Available Devices
       spotifyApi.getMyDevices().then(
@@ -665,7 +651,7 @@ const Dashboard = ({ props, code }) => {
       });
     }
   }
-  function clickPlaylist(e) {
+  function clickPlaylist(e, uri) {
     if (e.target.getAttribute("alt") !== null && (e.target.getAttribute("alt") !== currentPlaylistName)) {
       window.scrollTo({
         top: document.body.scrollHeight || document.documentElement.scrollHeight,
@@ -674,10 +660,28 @@ const Dashboard = ({ props, code }) => {
       });
       setCurrentPlaylistName(e.target.getAttribute("alt"));
       setCurrentPlaylist(e.target.getAttribute("longdesc"));
+      setCurrentPlaylistURI(uri);
       setTracks([]);
       setSpinner(spinner + 1);
     }
   }
+  function clickPlaylistPlayButton(uri, name) {
+    
+    setCurrentPlaylistURI(uri);
+    clickScrollUp()
+    spotifyApi.play({
+      "context_uri": uri
+    }).then(
+      function () {
+        //console.log('Playback started');
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
+  }
+  
   function changeColor(color) {
     backgroundColor.current.style.backgroundColor = color;
   }
@@ -806,7 +810,8 @@ const Dashboard = ({ props, code }) => {
                   />
                 </div>
                 <div className={classes.alignItemsAndJustifyContent}>
-                    <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist} currentPlaylistName={currentPlaylistName}/>
+                    <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist}
+                     currentPlaylistName={currentPlaylistName} clickPlaylistPlayButton={clickPlaylistPlayButton} />
                 </div>
 
                 {/* <Marquee style={{"width": "40%", "margin": "auto"}}gradient={false} speed={40}> */}

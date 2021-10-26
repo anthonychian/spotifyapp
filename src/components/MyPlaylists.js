@@ -3,6 +3,7 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import IconButton from '@mui/material/IconButton';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import { makeStyles } from '@material-ui/core/styles'
 
 
@@ -64,7 +65,7 @@ export default function MyPlaylists(props) {
                 <ImageListItem 
                 // onClick= {props.clickPlaylist} key={playlist.id}
                 onClick={(e) => {
-                    props.clickPlaylist(e)
+                    props.clickPlaylist(e, playlist.uri)
                 }} key={playlist.id}>
                     {(playlist.name !== props.currentPlaylistName) && 
                     <div className={classes.imgContainer}>
@@ -94,9 +95,13 @@ export default function MyPlaylists(props) {
                             subtitle={playlist.owner.display_name}
                             actionIcon={
                             <IconButton
-                                sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                                aria-label={`info about ${playlist.name}`}
+                                sx={{ color: 'white' }}
+                                aria-label={`${playlist.name}`}
+                                onClick={() => {
+                                    props.clickPlaylistPlayButton(playlist.uri, playlist.name)
+                                }}
                             >
+                                <PlayCircleOutlineIcon/>
                             </IconButton>
                             }
                         />
