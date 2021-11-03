@@ -124,6 +124,7 @@ const Dashboard = ({ props, code }) => {
   const [playlists, setPlaylists] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState("");
+  const [currentTrackPosition, setCurrentTrackPosition] = useState();
   const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [currentPlaylistURI, setCurrentPlaylistURI] = useState("")
   const [currentPlaylistName, setCurrentPlaylistName] = useState("");
@@ -533,7 +534,9 @@ const Dashboard = ({ props, code }) => {
 
       // Start/Resume a User's Playback
       spotifyApi.play({
-        "uris": [currentTrack]
+        "context_uri": currentPlaylistURI,
+        "offset": { "position": currentTrackPosition }
+        // "uris": [currentTrack],
       }).then(
         function () {
           //console.log('Playback started');
@@ -579,12 +582,12 @@ const Dashboard = ({ props, code }) => {
 
             if (!currentPlaylist) {
               setCurrentPlaylist(userPlaylists.body.items[0].id);
-              // setCurrentPlaylistURI(userPlaylists.body.items[0].uri)
+              setCurrentPlaylistURI(userPlaylists.body.items[0].uri)
               setCurrentPlaylistName(userPlaylists.body.items[0].name);
             } else {
               spotifyApi.getPlaylist(currentPlaylist).then((userPlaylist) => {
                 // for each track in each playlist
-                userPlaylist.body.tracks.items.forEach((song) => {
+                userPlaylist.body.tracks.items.forEach((song, index) => {
                   // update tracks state with name and image for each track
                   let allArtists = "";
                   if (song?.track?.artists) {
@@ -603,6 +606,7 @@ const Dashboard = ({ props, code }) => {
                       imageHigh: song.track.album.images[0].url,
                       imageLow: song.track.album.images[2].url,
                       link: song.track.uri,
+                      position: index,
                     },
                   ]);
                 });
@@ -625,7 +629,6 @@ const Dashboard = ({ props, code }) => {
   }
 
   function clickSong(event, song) {
-    clickScrollUp()
     if (!activeDevice) {
       // Get a User's Available Devices
       spotifyApi.getMyDevices().then(
@@ -641,6 +644,7 @@ const Dashboard = ({ props, code }) => {
       );
     }
     if (nowPlaying.name !== event.target.getAttribute("alt")) {
+      setCurrentTrackPosition(song.position);
       setCurrentTrack(event.target.getAttribute("longdesc"));
       setNowPlaying({
         name: song.name,
@@ -648,6 +652,7 @@ const Dashboard = ({ props, code }) => {
         image: song.image,
         imageHigh: song.imageHigh,
         imageLow: song.imageLow,
+        position: song.position
       });
     }
   }

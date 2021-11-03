@@ -40,7 +40,8 @@ export default function MyTracks(props) {
                                     artist: track.artist, 
                                     image: track.image,
                                     imageHigh: track.imageHigh,
-                                    imageLow: track.imageLow
+                                    imageLow: track.imageLow,
+                                    position: track.position
                                 });
                             }} 
                             key = {track.id + '000' + idx}>
