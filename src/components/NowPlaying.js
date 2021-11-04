@@ -3,7 +3,6 @@ import Lyrics from "./Lyrics";
 import { Palette } from 'react-palette';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
-import IconButton from '@mui/material/IconButton';
 import { makeStyles } from '@material-ui/core/styles'
 
 
@@ -54,12 +53,7 @@ export default function NowPlaying(props) {
                     title={props.nowPlaying.name}         
                     subtitle={props.nowPlaying.artist}
                     actionIcon={
-                    <IconButton
-                        sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                        aria-label={`info about ${props.nowPlaying.name}`}
-                    >
-                    <Lyrics lyrics={props.lyrics}/>
-                    </IconButton>
+                        <Lyrics lyrics={props.lyrics}/>
                     }
                 />
             </ImageListItem>

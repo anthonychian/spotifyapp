@@ -351,12 +351,13 @@ const Dashboard = ({ props, code }) => {
                   );
                   allArtists = allArtists.slice(0, allArtists.length - 2);
                 }
-
-                setCurrentPosition({
-                  position: res.data.progress_ms,
-                  total: res.data.item.duration_ms,
-                  onChange: false,
-                });
+                if (res.data.item.duration_ms) {
+                  setCurrentPosition({
+                    position: res.data.progress_ms,
+                    total: res.data.item.duration_ms,
+                    onChange: false,
+                  });
+                }
 
 
                 if (nowPlaying.name !== res.data.item.name) {
@@ -405,7 +406,7 @@ const Dashboard = ({ props, code }) => {
                         });
 
                         // axios({
-                        //   url: `https://genius.com/api/search/song?q=us`,
+                        //   url: `https://cors-anywhere.herokuapp.com/https://genius.com/api/search?q={us}&access_token=${process.env.REACT_APP_GENIUS_KEY}`,
                         //   method: "GET",
                         //   headers: {
                         //     Accept: 'application/json',
@@ -419,19 +420,19 @@ const Dashboard = ({ props, code }) => {
                         // .catch(function (error) {
                         //   console.log(error);
                         // });
+                        
                         console.log(`getting lyrics for ${res.data.item.name} by ${res.data.item.artists[0].name}`)
                         const options = {
-                          apiKey: 'zqNf6ToeKSVkmw0oThz8IgY4jFlRA0sZzdbWXGurnpbi4bPHvAum4y_uZlxJRaOQ',
+                          apiKey: process.env.REACT_APP_GENIUS_KEY,
                           title: res.data.item.name,
                           artist: res.data.item.artists[0].name,
-                          optimizeQuery: true
+                          optimizeQuery: true,
+                          authMethod: 'access_token',
                         };
 
                         getLyrics(options).then((lyrics) => {
                           setLyrics(lyrics)
-                          // console.log(lyrics)
-                          // console.log(lyrics.split('\n'))
-                          // console.log(formatLyrics(lyrics.split('')))
+                          
                         });
                         // getSong(options).then((song) =>
                         //   console.log(`

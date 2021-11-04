@@ -5,8 +5,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import QueueMusicIcon from '@mui/icons-material/QueueMusic';
-import Tooltip from '@mui/material/Tooltip';
 
 export default function Lyrics(props) {
   const [open, setOpen] = React.useState(false);
@@ -45,7 +43,7 @@ export default function Lyrics(props) {
 
   return (
     <div>
-        <Button  sx={{fontSize:'0.5em', color: 'white'}}onClick={handleClickOpen('body')}>Lyrics</Button>
+        <Button  sx={{fontSize:'0.7em', color: 'white'}}onClick={handleClickOpen('body')}>Lyrics</Button>
       {/* <Button onClick={handleClickOpen('body')}>Body</Button> */}
       <Dialog
         open={open}
