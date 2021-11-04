@@ -7,6 +7,7 @@ import ListSubheader from '@mui/material/ListSubheader';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import IconButton from '@mui/material/IconButton';
 
+
 export default function MyTracks(props) {
     const [loading, setLoading] = useState(true);
     useEffect(() => {
@@ -37,7 +38,8 @@ export default function MyTracks(props) {
                             onClick={(e) => {
                                 props.clickSong(e, {
                                     name: track.name, 
-                                    artist: track.artist, 
+                                    artist: track.artist,
+                                    lyricsArtist: track.lyricsArtist, 
                                     image: track.image,
                                     imageHigh: track.imageHigh,
                                     imageLow: track.imageLow,
@@ -68,6 +70,7 @@ export default function MyTracks(props) {
                                     loading="lazy"
                                 />
                             </div>
+                            
                             <ImageListItemBar
                                 title={track.name}         
                                 subtitle={track.artist}
@@ -79,6 +82,7 @@ export default function MyTracks(props) {
                                 </IconButton>
                                 }
                             />
+                        
                         </ImageListItem>
                     ))}
                 </ImageList>

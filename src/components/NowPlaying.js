@@ -1,5 +1,5 @@
 import React from 'react'
-
+import Lyrics from "./Lyrics";
 import { Palette } from 'react-palette';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -58,6 +58,7 @@ export default function NowPlaying(props) {
                         sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
                         aria-label={`info about ${props.nowPlaying.name}`}
                     >
+                    <Lyrics lyrics={props.lyrics}/>
                     </IconButton>
                     }
                 />

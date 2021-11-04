@@ -10,6 +10,7 @@ import MySlider from "./MySlider";
 import TrackInfo from "./TrackInfo";
 import PlaylistName from "./PlaylistName";
 
+
 import useAuth from "../useAuth";
 import SpotifyWebApi from "spotify-web-api-node";
 import axios from "axios";
@@ -25,6 +26,9 @@ import Typography from '@mui/material/Typography';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Slide from '@mui/material/Slide';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
+import { getLyrics } from 'genius-lyrics-api';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -92,6 +96,7 @@ const spotifyApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_CLIENT_ID,
 });
 
+
 function HideOnScroll(props) {
   const { children, window } = props;
   // Note that you normally won't need to set the window ref as useScrollTrigger
@@ -109,6 +114,7 @@ function HideOnScroll(props) {
 }
 
 const Dashboard = ({ props, code }) => {
+
   const classes = useStyles();
 
   const backgroundColor = useRef(null);
@@ -137,6 +143,10 @@ const Dashboard = ({ props, code }) => {
   const [spinner, setSpinner] = useState(0);
   const [particlesOn, setParticlesOn] = useState(true);
   const [shuffle, setShuffle] = useState({});
+  const [scriptLoading, setScriptLoading] = useState(true);
+  const [songClickedCounter, setSongClickedCounter] = useState(0);
+  const [lyrics, setLyrics] = useState('');
+
   const [repeatSong, setRepeatSong] = useState({
     repeatOff: true,
     repeatContext: null,
@@ -144,7 +154,7 @@ const Dashboard = ({ props, code }) => {
     clicked: false,
   });
 
-  const [scriptLoading, setScriptLoading] = useState(true);
+ 
 
   const accessToken = useAuth(code);
   spotifyApi.setAccessToken(accessToken);
@@ -220,6 +230,7 @@ const Dashboard = ({ props, code }) => {
 
   // delay to display loading for a few seconds
   useEffect(() => {
+
     const timeoutID = setTimeout(() => {
       setLoading(false);
     }, 8000);
@@ -349,7 +360,7 @@ const Dashboard = ({ props, code }) => {
 
 
                 if (nowPlaying.name !== res.data.item.name) {
-
+                  console.log('clicked')
                   setNowPlaying({
                     name: res.data.item.name,
                     artist: allArtists,
@@ -357,6 +368,87 @@ const Dashboard = ({ props, code }) => {
                     imageHigh: res.data.item.album.images[0].url,
                     imageLow: res.data.item.album.images[2].url,
                   });
+
+                  axios({
+                    url: `https://api.spotify.com/v1/me/player/currently-playing`,
+                    method: "GET",
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${accessToken}`,
+                    },
+                  })
+                    .then(function (res) {
+                      let allArtists = " ";
+                      if (res.data?.item?.artists) {
+                        res.data?.item?.artists.map(
+                          (x) => (allArtists += ` ${x.name}, `)
+                        );
+                        allArtists = allArtists.slice(0, allArtists.length - 2);
+                      }
+      
+                      setCurrentPosition({
+                        position: res.data.progress_ms,
+                        total: res.data.item.duration_ms,
+                        onChange: false,
+                      });
+      
+      
+                      if (nowPlaying.name !== res.data.item.name) {
+                        console.log('in if')
+                        setNowPlaying({
+                          name: res.data.item.name,
+                          artist: allArtists,
+                          image: res.data.item.album.images[1].url,
+                          imageHigh: res.data.item.album.images[0].url,
+                          imageLow: res.data.item.album.images[2].url,
+                        });
+
+                        // axios({
+                        //   url: `https://genius.com/api/search/song?q=us`,
+                        //   method: "GET",
+                        //   headers: {
+                        //     Accept: 'application/json',
+                        //     'Content-Type': 'application/json',
+                        //     'Access-Control-Allow-Origin': '*',
+                        //   },
+                        // })
+                        // .then(function (res) {
+                        //   console.log(res)
+                        // })
+                        // .catch(function (error) {
+                        //   console.log(error);
+                        // });
+                        console.log(`getting lyrics for ${res.data.item.name} by ${res.data.item.artists[0].name}`)
+                        const options = {
+                          apiKey: 'zqNf6ToeKSVkmw0oThz8IgY4jFlRA0sZzdbWXGurnpbi4bPHvAum4y_uZlxJRaOQ',
+                          title: res.data.item.name,
+                          artist: res.data.item.artists[0].name,
+                          optimizeQuery: true
+                        };
+
+                        getLyrics(options).then((lyrics) => {
+                          setLyrics(lyrics)
+                          // console.log(lyrics)
+                          // console.log(lyrics.split('\n'))
+                          // console.log(formatLyrics(lyrics.split('')))
+                        });
+                        // getSong(options).then((song) =>
+                        //   console.log(`
+                        //   ${song.id}
+                        //   ${song.title}
+                        //   ${song.url}
+                        //   ${song.albumArt}
+                        //   ${song.lyrics}`)
+                        // );
+
+
+                      }
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                    });
+
                 }
               })
               .catch(function (error) {
@@ -550,7 +642,7 @@ const Dashboard = ({ props, code }) => {
 
     playTrack();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTrack]);
+  }, [songClickedCounter]);
 
   // use effect runs when accessToken or currentPlaylist changes (playlist is clicked)
   useEffect(() => {
@@ -602,6 +694,7 @@ const Dashboard = ({ props, code }) => {
                     {
                       name: song.track.name,
                       artist: allArtists,
+                      lyricsArtist: song.track.artists[0].name,
                       image: song.track.album.images[1].url,
                       imageHigh: song.track.album.images[0].url,
                       imageLow: song.track.album.images[2].url,
@@ -644,6 +737,7 @@ const Dashboard = ({ props, code }) => {
       );
     }
     if (nowPlaying.name !== event.target.getAttribute("alt")) {
+      setSongClickedCounter(songClickedCounter + 1)
       setCurrentTrackPosition(song.position);
       setCurrentTrack(event.target.getAttribute("longdesc"));
       setNowPlaying({
@@ -653,6 +747,17 @@ const Dashboard = ({ props, code }) => {
         imageHigh: song.imageHigh,
         imageLow: song.imageLow,
         position: song.position
+      });
+      console.log(`getting lyrics for ${song.name} by ${song.lyricsArtist}`)
+      const options = {
+        apiKey: 'zqNf6ToeKSVkmw0oThz8IgY4jFlRA0sZzdbWXGurnpbi4bPHvAum4y_uZlxJRaOQ',
+        title: song.name,
+        artist: song.lyricsArtist,
+        optimizeQuery: true
+      };
+
+      getLyrics(options).then((lyrics) => {
+        setLyrics(lyrics)
       });
     }
   }
@@ -690,6 +795,29 @@ const Dashboard = ({ props, code }) => {
   function changeColor(color) {
     backgroundColor.current.style.backgroundColor = color;
   }
+  // function formatLyrics(lyrics) {
+  //   let res = [];
+  //   let text = ``;
+  //   let next = false;
+  //   lyrics.forEach((element) => {
+  //       if (element === ']' && !next) {
+  //           text += element;
+  //           res.push(text)
+  //           next = true;
+  //           text = ``;
+  //       }
+  //       else if ((element === '[' && next) ) {
+  //           res.push(text)
+  //           text = ``;
+  //           text += element;
+  //           next = false;
+  //       }
+  //       else {
+  //           text += element;
+  //       }
+  //   });
+  //   return res;
+  // }
 
   return (
     <div>
@@ -763,25 +891,28 @@ const Dashboard = ({ props, code }) => {
                 </Marquee>
 
                 <div style={{ paddingBottom: "1em" }}>
-                <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying} />
+                  <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying} lyrics={lyrics} />
 
-                <div className={classes.alignItemsAndJustifyContent}>
-                    <PlayerButtons
-                    paused={paused}
-                    setPaused={setPaused}
-                    setSkipSong={setSkipSong}
-                    shuffle={shuffle}
-                    setShuffle={setShuffle}
-                    repeatSong={repeatSong}
-                    setRepeatSong={setRepeatSong}
-                    />
-                </div>
-                <div className={classes.alignItemsAndJustifyContent}>
-                    <MySlider
-                    setCurrentPosition={setCurrentPosition}
-                    currentPosition={currentPosition}
-                    />
-                </div>
+                  <div className={classes.alignItemsAndJustifyContent}>
+                      <PlayerButtons
+                      paused={paused}
+                      setPaused={setPaused}
+                      setSkipSong={setSkipSong}
+                      shuffle={shuffle}
+                      setShuffle={setShuffle}
+                      repeatSong={repeatSong}
+                      setRepeatSong={setRepeatSong}
+                      />
+                  </div>
+                  <div className={classes.alignItemsAndJustifyContent}>
+                      <MySlider
+                      setCurrentPosition={setCurrentPosition}
+                      currentPosition={currentPosition}
+                      />
+                  </div>
+                  {/* <div className={classes.alignItemsAndJustifyContent}>
+                    <Lyrics lyrics={lyrics}/>
+                  </div> */}
                 </div>
             </div>}
             
