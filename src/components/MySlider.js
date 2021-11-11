@@ -1,4 +1,4 @@
-import React from 'react'
+import { React, useState, useEffect } from 'react'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -30,19 +30,48 @@ const Widget = styled('div')(() => ({
   });
 
 export default function MySlider(props) {
+
     const theme = useTheme();
     let duration = props.currentPosition.total / 1000;
     let position = props.currentPosition.position / 1000;
+
+    const [sliderPosition, setSliderPosition] = useState(position);
+    const [sliderPause, setSliderPause] = useState(false)
+
     if (isNaN(props.currentPosition.total) || isNaN(props.currentPosition.position)) {
         duration = 0;
         position = 0;
     }
+    
+    useEffect(() => {
+        const timeoutID = setTimeout(() => {
+            if(!props.paused.paused && !sliderPause)
+                setSliderPosition(sliderPosition + 1)
+        }, 1000);
+        return () => clearTimeout(timeoutID);
+    });
+
+    useEffect(() => {
+        console.log('setting to 0')
+        setSliderPosition(0)
+    }, [props.currentTrack]);
+
 
     function formatDuration(value) {
         const minute = Math.floor(value / 60);
         const secondLeft = Math.floor(value - minute * 60);
-        return `${minute}:${secondLeft < 9 ? `0${secondLeft}` : secondLeft}`;
+        return `${minute}:${secondLeft <= 9 ? `0${secondLeft}` : `${secondLeft}`}`;
     }
+    function handleEvent(event) {
+        if (event.type === "mousedown") {
+            console.log('down')
+            setSliderPause(true)
+        } else {
+            console.log('up')
+            setSliderPause(false)
+        }
+    }
+    
 
     return (
         <Box sx={{ width: '100%', overflow: 'hidden' }}>
@@ -50,15 +79,26 @@ export default function MySlider(props) {
                 <Slider
                     aria-label="time-indicator"
                     size="small"
-                    value={position}
+                    value={sliderPosition}
                     min={0}
                     step={1}
+                    onMouseDown={handleEvent}
+                    onMouseUp={handleEvent}
                     max={duration}
-                    onChange={(_, value) => props.setCurrentPosition({
-                        position: value * 1000,
-                        total: props.currentPosition.total,
-                        onChange: true
-                    })}
+                    onChange={(_, value) => {
+                        // Only update the UI. Do nothing to the audio. This is similar to youtube music.
+                        setSliderPosition(value)
+                    }}
+                    onChangeCommitted={(_, value) => {
+                        props.setCurrentPosition({
+                            position: value * 1000,
+                            total: props.currentPosition.total,
+                            onChange: true
+                        })
+                    }}
+                    // 1. Update audio file's position
+                    //   1.2 in the completion handler of updating audo file, 
+                    //       also update UI because it may lag before audio file starts playing.
                     sx={{
                     color: 'white',
                     height: 4,
@@ -94,8 +134,8 @@ export default function MySlider(props) {
                     justifyContent: 'space-between',
                     mt: -2,
                 }}>
-                    <TinyText>{formatDuration(position)}</TinyText>
-                    <TinyText>-{formatDuration(duration - position)}</TinyText>
+                    <TinyText>{formatDuration(sliderPosition)}</TinyText>
+                    <TinyText>-{formatDuration(duration - sliderPosition)}</TinyText>
                 </Box>
             </Widget>
         </Box>

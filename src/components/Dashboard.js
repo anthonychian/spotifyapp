@@ -13,7 +13,7 @@ import PlaylistName from "./PlaylistName";
 
 import useAuth from "../useAuth";
 import SpotifyWebApi from "spotify-web-api-node";
-import axios from "axios";
+// import axios from "axios";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
@@ -135,13 +135,16 @@ const Dashboard = ({ props, code }) => {
   const [currentPlaylistURI, setCurrentPlaylistURI] = useState("")
   const [currentPlaylistName, setCurrentPlaylistName] = useState("");
   const [nowPlaying, setNowPlaying] = useState({});
-  const [paused, setPaused] = useState({});
+  const [paused, setPaused] = useState({
+    paused: true,
+    clicked: false,
+  });
   const [skipSong, setSkipSong] = useState({});
   const [loading, setLoading] = useState(true);
   const [activeDevice, setActiveDevice] = useState(false);
   const [currentPosition, setCurrentPosition] = useState({});
   const [spinner, setSpinner] = useState(0);
-  const [particlesOn, setParticlesOn] = useState(true);
+  const [particlesOn, setParticlesOn] = useState(false);
   const [shuffle, setShuffle] = useState({});
   const [scriptLoading, setScriptLoading] = useState(true);
   const [songClickedCounter, setSongClickedCounter] = useState(0);
@@ -186,7 +189,57 @@ const Dashboard = ({ props, code }) => {
         player.addListener('playback_error', ({ message }) => { console.error(message); });
       
         // Playback status updates
-        //player.addListener('player_state_changed', state => { console.log(state); });
+        player.addListener('player_state_changed', state => { 
+          console.log(state);
+
+          setCurrentPosition({
+            position: state.position,
+            total: state.duration,
+            onChange: false,
+          });
+
+          setPaused({
+            paused: state.paused,
+            clicked: false,
+          });
+          
+          if (nowPlaying.name !== state.track_window.current_track.name) {
+            let allArtists = " ";
+            state.track_window.current_track.artists.map(
+              (x) => (allArtists += ` ${x.name}, `)
+            );
+            allArtists = allArtists.slice(0, allArtists.length - 2);
+            setCurrentTrack(state.track_window.current_track.name)
+            setNowPlaying({
+              name: state.track_window.current_track.name,
+              artist: allArtists,
+              image: state.track_window.current_track.album.images[0].url,
+              imageLow: state.track_window.current_track.album.images[1].url,
+              imageHigh: state.track_window.current_track.album.images[2].url,
+              position: state.position,
+            });
+            setCurrentPosition({
+              position: 0,
+              total: state.duration,
+              onChange: false,
+            });
+
+            console.log(`getting lyrics for ${state.track_window.current_track.name} 
+              by ${state.track_window.current_track.artists[0].name}`)
+            const options = {
+              apiKey: process.env.REACT_APP_GENIUS_KEY,
+              title: state.track_window.current_track.name,
+              artist: state.track_window.current_track.artists[0].name,
+              optimizeQuery: true,
+            };
+            getLyrics(options).then((lyrics) => {
+              setLyrics(lyrics)
+            });
+
+          }
+          
+
+        });
       
         // Ready
         player.addListener('ready', ({ device_id }) => {
@@ -230,244 +283,16 @@ const Dashboard = ({ props, code }) => {
 
   // delay to display loading for a few seconds
   useEffect(() => {
-
-    const timeoutID = setTimeout(() => {
+  const timeoutID = setTimeout(() => {
       setLoading(false);
-    }, 8000);
-    return () => clearTimeout(timeoutID);
-  }, []);
-
-  // keeps track of current song (runs every 1 second)
-  useEffect(() => {
-
-    const timeoutID = setTimeout(() => {
-      // Setting Up the spotifyApi with AccessToken so that we can use its functions anywhere in the component without setting AccessToken value again & again.
-      // spotifyApi.setAccessToken(accessToken);
-
-      if (!activeDevice) {
-        // Get a User's Available Devices
-        spotifyApi.getMyDevices().then(
-          function (data) {
-            let availableDevices = data.body.devices;
-            if (availableDevices.length > 0) {
-              setActiveDevice(true);
-            }
-          },
-          function (err) {
-            console.log("Something went wrong!", err);
-          }
-        );
-      }
-      if (activeDevice) {
-        spotifyApi.getMyCurrentPlaybackState().then(
-          function (data) {
-            // console.log(data.body)
-            // Output items
-            if (data.body) {
-              if (data.body.is_playing) {
-                // set pause/play button to correctly display current state
-                if (paused.paused == null || paused.paused === true)
-                  setPaused({
-                    paused: false,
-                    clicked: false,
-                  });
-              } else {
-                if (paused.paused == null || paused.paused === false)
-                  setPaused({
-                    paused: true,
-                    clicked: false,
-                  });
-              }
-
-              if (data.body.shuffle_state === false) {
-                if (shuffle == null || shuffle === true) {
-                  setShuffle({
-                    shuffle: false,
-                    clicked: false,
-                  });
-                }
-              } else {
-                if (shuffle == null || shuffle === false) {
-                  setShuffle({
-                    shuffle: true,
-                    clicked: false,
-                  });
-                }
-              }
-
-              if (data.body.repeat_state === "off") {
-                if (
-                  repeatSong.repeatOff == null ||
-                  repeatSong.repeatOff !== true
-                ) {
-                  setRepeatSong({
-                    repeatOff: true,
-                    repeatContext: false,
-                    repeatTrack: false,
-                    clicked: false,
-                  });
-                }
-              } else if (data.body.repeat_state === "context") {
-                if (
-                  repeatSong.repeatContext == null ||
-                  repeatSong.repeatContext !== true
-                ) {
-                  setRepeatSong({
-                    repeatOff: false,
-                    repeatContext: true,
-                    repeatTrack: false,
-                    clicked: false,
-                  });
-                }
-              } else if (data.body.repeat_state === "track") {
-                if (
-                  repeatSong.repeatTrack == null ||
-                  repeatSong.repeatTrack !== true
-                ) {
-                  setRepeatSong({
-                    repeatOff: false,
-                    repeatContext: false,
-                    repeatTrack: true,
-                    clicked: false,
-                  });
-                }
-              }
-            }
-
-            axios({
-              url: `https://api.spotify.com/v1/me/player/currently-playing`,
-              method: "GET",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${accessToken}`,
-              },
-            })
-              .then(function (res) {
-                let allArtists = " ";
-                if (res.data?.item?.artists) {
-                  res.data?.item?.artists.map(
-                    (x) => (allArtists += ` ${x.name}, `)
-                  );
-                  allArtists = allArtists.slice(0, allArtists.length - 2);
-                }
-                if (res.data.item.duration_ms) {
-                  setCurrentPosition({
-                    position: res.data.progress_ms,
-                    total: res.data.item.duration_ms,
-                    onChange: false,
-                  });
-                }
-
-
-                if (nowPlaying.name !== res.data.item.name) {
-                  console.log('clicked')
-                  setNowPlaying({
-                    name: res.data.item.name,
-                    artist: allArtists,
-                    image: res.data.item.album.images[1].url,
-                    imageHigh: res.data.item.album.images[0].url,
-                    imageLow: res.data.item.album.images[2].url,
-                  });
-
-                  axios({
-                    url: `https://api.spotify.com/v1/me/player/currently-playing`,
-                    method: "GET",
-                    headers: {
-                      Accept: "application/json",
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${accessToken}`,
-                    },
-                  })
-                    .then(function (res) {
-                      let allArtists = " ";
-                      if (res.data?.item?.artists) {
-                        res.data?.item?.artists.map(
-                          (x) => (allArtists += ` ${x.name}, `)
-                        );
-                        allArtists = allArtists.slice(0, allArtists.length - 2);
-                      }
-      
-                      setCurrentPosition({
-                        position: res.data.progress_ms,
-                        total: res.data.item.duration_ms,
-                        onChange: false,
-                      });
-      
-      
-                      if (nowPlaying.name !== res.data.item.name) {
-                        console.log('in if')
-                        setNowPlaying({
-                          name: res.data.item.name,
-                          artist: allArtists,
-                          image: res.data.item.album.images[1].url,
-                          imageHigh: res.data.item.album.images[0].url,
-                          imageLow: res.data.item.album.images[2].url,
-                        });
-
-                        // axios({
-                        //   url: `https://cors-anywhere.herokuapp.com/https://genius.com/api/search?q={us}&access_token=${process.env.REACT_APP_GENIUS_KEY}`,
-                        //   method: "GET",
-                        //   headers: {
-                        //     Accept: 'application/json',
-                        //     'Content-Type': 'application/json',
-                        //     'Access-Control-Allow-Origin': '*',
-                        //   },
-                        // })
-                        // .then(function (res) {
-                        //   console.log(res)
-                        // })
-                        // .catch(function (error) {
-                        //   console.log(error);
-                        // });
-                        
-                        console.log(`getting lyrics for ${res.data.item.name} by ${res.data.item.artists[0].name}`)
-                        const options = {
-                          apiKey: process.env.REACT_APP_GENIUS_KEY,
-                          title: res.data.item.name,
-                          artist: res.data.item.artists[0].name,
-                          optimizeQuery: true,
-                          authMethod: 'access_token',
-                        };
-
-                        getLyrics(options).then((lyrics) => {
-                          setLyrics(lyrics)
-                          
-                        });
-                        // getSong(options).then((song) =>
-                        //   console.log(`
-                        //   ${song.id}
-                        //   ${song.title}
-                        //   ${song.url}
-                        //   ${song.albumArt}
-                        //   ${song.lyrics}`)
-                        // );
-
-
-                      }
-                    })
-                    .catch(function (error) {
-                      console.log(error);
-                    });
-
-                }
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-          },
-          function (err) {
-            console.log("Something went wrong!", err);
-          }
-        );
-      }
     }, 1000);
     return () => clearTimeout(timeoutID);
-  });
+  }, []);
 
   // when currentPosition is changed (song position each second or user scrolls position)
   useEffect(() => {
     function changePosition() {
+      console.log(`changing position ${currentPosition.position}`)
       // Seek To Position In Currently Playing Track
       spotifyApi.seek(currentPosition.position).then(
         function () {
@@ -555,6 +380,9 @@ const Dashboard = ({ props, code }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repeatSong]);
 
+  // delay to display loading for a few seconds
+  
+
   // when paused changes (play button is clicked)
   useEffect(() => {
     function changePlayState() {
@@ -563,6 +391,7 @@ const Dashboard = ({ props, code }) => {
         spotifyApi.pause().then(
           function () {
             //console.log('Playback paused');
+
           },
           function (err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -571,9 +400,12 @@ const Dashboard = ({ props, code }) => {
         );
       } else {
         // Start/Resume a User's Playback
-        spotifyApi.play().then(
+        spotifyApi.play()
+        .then(
           function () {
             //console.log('Playback started');
+            
+
           },
           function (err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -740,26 +572,16 @@ const Dashboard = ({ props, code }) => {
     if (nowPlaying.name !== event.target.getAttribute("alt")) {
       setSongClickedCounter(songClickedCounter + 1)
       setCurrentTrackPosition(song.position);
-      setCurrentTrack(event.target.getAttribute("longdesc"));
-      setNowPlaying({
-        name: song.name,
-        artist: song.artist,
-        image: song.image,
-        imageHigh: song.imageHigh,
-        imageLow: song.imageLow,
-        position: song.position
-      });
-      console.log(`getting lyrics for ${song.name} by ${song.lyricsArtist}`)
-      const options = {
-        apiKey: 'zqNf6ToeKSVkmw0oThz8IgY4jFlRA0sZzdbWXGurnpbi4bPHvAum4y_uZlxJRaOQ',
-        title: song.name,
-        artist: song.lyricsArtist,
-        optimizeQuery: true
-      };
-
-      getLyrics(options).then((lyrics) => {
-        setLyrics(lyrics)
-      });
+      setCurrentTrack(song.name);
+      // setCurrentTrack(event.target.getAttribute("longdesc"));
+      // setNowPlaying({
+      //   name: song.name,
+      //   artist: song.artist,
+      //   image: song.image,
+      //   imageLow: song.imageLow,
+      //   imageHigh: song.imageHigh,
+      //   position: song.position
+      // });
     }
   }
   function clickPlaylist(e, uri) {
@@ -778,8 +600,8 @@ const Dashboard = ({ props, code }) => {
   }
   function clickPlaylistPlayButton(uri, name) {
     
-    setCurrentPlaylistURI(uri);
-    clickScrollUp()
+    // setCurrentPlaylistURI(uri);
+    // clickScrollUp()
     spotifyApi.play({
       "context_uri": uri
     }).then(
@@ -796,29 +618,6 @@ const Dashboard = ({ props, code }) => {
   function changeColor(color) {
     backgroundColor.current.style.backgroundColor = color;
   }
-  // function formatLyrics(lyrics) {
-  //   let res = [];
-  //   let text = ``;
-  //   let next = false;
-  //   lyrics.forEach((element) => {
-  //       if (element === ']' && !next) {
-  //           text += element;
-  //           res.push(text)
-  //           next = true;
-  //           text = ``;
-  //       }
-  //       else if ((element === '[' && next) ) {
-  //           res.push(text)
-  //           text = ``;
-  //           text += element;
-  //           next = false;
-  //       }
-  //       else {
-  //           text += element;
-  //       }
-  //   });
-  //   return res;
-  // }
 
   return (
     <div>
@@ -909,6 +708,8 @@ const Dashboard = ({ props, code }) => {
                       <MySlider
                       setCurrentPosition={setCurrentPosition}
                       currentPosition={currentPosition}
+                      paused={paused}
+                      currentTrack={currentTrack}
                       />
                   </div>
                   {/* <div className={classes.alignItemsAndJustifyContent}>
