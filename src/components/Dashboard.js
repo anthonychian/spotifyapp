@@ -192,11 +192,11 @@ const Dashboard = ({ props, code }) => {
         player.addListener('player_state_changed', state => { 
           console.log(state);
 
-          setCurrentPosition({
-            position: state.position,
-            total: state.duration,
-            onChange: false,
-          });
+          // setCurrentPosition({
+          //   position: state.position,
+          //   total: state.duration,
+          //   onChange: false,
+          // });
 
           setPaused({
             paused: state.paused,

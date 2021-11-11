@@ -63,7 +63,7 @@ export default function MySlider(props) {
         return `${minute}:${secondLeft <= 9 ? `0${secondLeft}` : `${secondLeft}`}`;
     }
     function handleEvent(event) {
-        if (event.type === "mousedown") {
+        if (event.type === "mousedown" || event.type === "touchstart") {
             console.log('down')
             setSliderPause(true)
         } else {
@@ -84,6 +84,8 @@ export default function MySlider(props) {
                     step={1}
                     onMouseDown={handleEvent}
                     onMouseUp={handleEvent}
+                    onTouchStart={handleEvent}
+                    onTouchEnd={handleEvent}
                     max={duration}
                     onChange={(_, value) => {
                         // Only update the UI. Do nothing to the audio. This is similar to youtube music.
