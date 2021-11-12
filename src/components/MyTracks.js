@@ -48,17 +48,6 @@ export default function MyTracks(props) {
                             }} 
                             key = {track.id + '000' + idx}>
                             
-                            {/* {!props.activeDevice && <a href={track.link}>
-                                <img
-                                    src={`${track.imageLow}`}
-                                    srcSet={`${track.image} 1x, ${track.imageHigh} 2x`}
-                                    height="auto"
-                                    width="100%"
-                                    alt={track.name}
-                                    longdesc={track.link}
-                                    loading="lazy"
-                                />
-                            </a>} */}
                             <div style={{ cursor: 'pointer' }}>
                                 <img
                                     src={`${track.imageLow}`}

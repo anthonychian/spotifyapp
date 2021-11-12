@@ -71,13 +71,11 @@ export default function PlayerButtons(props) {
             </IconButton>
 
 
-            {props.repeatSong.repeatOff && <IconButton 
+            {props.repeatSong.repeatMode === 0 && <IconButton 
                 sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setRepeatSong({
-                  repeatOff: false,
-                  repeatContext: true,
-                  repeatTrack: false,
+                  repeatMode: 1,
                   clicked: true
                 })}>
                 <RepeatIcon 
@@ -85,13 +83,11 @@ export default function PlayerButtons(props) {
                   htmlColor={mainIconColor}
                 />
             </IconButton>}
-            {props.repeatSong.repeatContext && <IconButton 
+            {props.repeatSong.repeatMode === 1 && <IconButton 
                 sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setRepeatSong({
-                  repeatOff: false,
-                  repeatContext: false,
-                  repeatTrack: true,
+                  repeatMode: 2,
                   clicked: true
                 })}>
                 <RepeatOnIcon 
@@ -100,13 +96,11 @@ export default function PlayerButtons(props) {
                   />
             </IconButton>}
 
-            {props.repeatSong.repeatTrack && <IconButton 
+            {props.repeatSong.repeatMode === 2 && <IconButton 
                 sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setRepeatSong({
-                  repeatOff: true,
-                  repeatContext: false,
-                  repeatTrack: false,
+                  repeatMode: 0,
                   clicked: true
                 })}>
                 <RepeatOneIcon 

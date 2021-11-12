@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     padding: "1em 0 0 1em",
-    ['@media (max-width:1282px)']: { // eslint-disable-line no-useless-computed-key
+    ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
       display: 'none',
     }
   },
@@ -115,6 +115,10 @@ function HideOnScroll(props) {
 
 const Dashboard = ({ props, code }) => {
 
+  let testSong = ''
+  let testPosition = 0;
+  let testRepeat = ''
+  let testShuffle = ''
   const classes = useStyles();
 
   const backgroundColor = useRef(null);
@@ -135,26 +139,27 @@ const Dashboard = ({ props, code }) => {
   const [currentPlaylistURI, setCurrentPlaylistURI] = useState("")
   const [currentPlaylistName, setCurrentPlaylistName] = useState("");
   const [nowPlaying, setNowPlaying] = useState({});
-  const [paused, setPaused] = useState({
-    paused: true,
-    clicked: false,
-  });
   const [skipSong, setSkipSong] = useState({});
   const [loading, setLoading] = useState(true);
-  const [activeDevice, setActiveDevice] = useState(false);
-  const [currentPosition, setCurrentPosition] = useState({});
   const [spinner, setSpinner] = useState(0);
   const [particlesOn, setParticlesOn] = useState(false);
   const [shuffle, setShuffle] = useState({});
   const [scriptLoading, setScriptLoading] = useState(true);
   const [songClickedCounter, setSongClickedCounter] = useState(0);
   const [lyrics, setLyrics] = useState('');
-
-  const [repeatSong, setRepeatSong] = useState({
-    repeatOff: true,
-    repeatContext: null,
-    repeatTrack: null,
+  const [sliderPosition, setSliderPosition] = useState(0);
+  const [currentPosition, setCurrentPosition] = useState({
+    position: 0,
+    total: 0,
+    onChange: false,
+  });
+  const [paused, setPaused] = useState({
+    paused: true,
     clicked: false,
+  });
+  const [repeatSong, setRepeatSong] = useState({
+    repeatMode: 0,
+    clicked: false
   });
 
  
@@ -190,20 +195,27 @@ const Dashboard = ({ props, code }) => {
       
         // Playback status updates
         player.addListener('player_state_changed', state => { 
-          console.log(state);
 
-          // setCurrentPosition({
-          //   position: state.position,
-          //   total: state.duration,
-          //   onChange: false,
-          // });
+          if (testPosition !== state.position) {
 
-          setPaused({
-            paused: state.paused,
-            clicked: false,
-          });
+            console.log(state.position)
+            setSliderPosition(state.position / 1000)
+            setCurrentPosition({
+              position: state.position,
+              total: state.duration,
+              onChange: false,
+            });
+
+            setPaused({
+              paused: state.paused,
+              clicked: false,
+            });
+          }
+          testPosition = state.position
           
-          if (nowPlaying.name !== state.track_window.current_track.name) {
+          
+          if (testSong !== state.track_window.current_track.name) {
+            // console.log('song changed')
             let allArtists = " ";
             state.track_window.current_track.artists.map(
               (x) => (allArtists += ` ${x.name}, `)
@@ -218,12 +230,7 @@ const Dashboard = ({ props, code }) => {
               imageHigh: state.track_window.current_track.album.images[2].url,
               position: state.position,
             });
-            setCurrentPosition({
-              position: 0,
-              total: state.duration,
-              onChange: false,
-            });
-
+            
             console.log(`getting lyrics for ${state.track_window.current_track.name} 
               by ${state.track_window.current_track.artists[0].name}`)
             const options = {
@@ -235,9 +242,24 @@ const Dashboard = ({ props, code }) => {
             getLyrics(options).then((lyrics) => {
               setLyrics(lyrics)
             });
-
           }
-          
+          testSong = state.track_window.current_track.name;
+
+          if (testRepeat !== state.repeat_mode) {
+            setRepeatSong({
+              repeatMode: state.repeat_mode,
+              clicked: false
+            })
+          }
+          testRepeat = state.repeat_mode
+
+          if (testShuffle !== state.shuffle) {
+            setShuffle({
+              shuffle: state.shuffle,
+              clicked: false
+            })
+          }
+          testShuffle = state.shuffle
 
         });
       
@@ -289,10 +311,10 @@ const Dashboard = ({ props, code }) => {
     return () => clearTimeout(timeoutID);
   }, []);
 
-  // when currentPosition is changed (song position each second or user scrolls position)
+  // when currentPosition is changed (user scrolls position)
   useEffect(() => {
     function changePosition() {
-      console.log(`changing position ${currentPosition.position}`)
+      // console.log(`changing position ${currentPosition.position}`)
       // Seek To Position In Currently Playing Track
       spotifyApi.seek(currentPosition.position).then(
         function () {
@@ -341,7 +363,7 @@ const Dashboard = ({ props, code }) => {
   // when repeat button is clicked
   useEffect(() => {
     function changeRepeat() {
-      if (repeatSong.repeatOff) {
+      if (repeatSong.repeatMode === 0) {
         // Toggle Repeat For User’s Playback
         spotifyApi.setRepeat("off").then(
           function () {
@@ -352,7 +374,7 @@ const Dashboard = ({ props, code }) => {
             console.log("Something went wrong!", err);
           }
         );
-      } else if (repeatSong.repeatContext) {
+      } else if (repeatSong.repeatMode === 1) {
         // Toggle Repeat For User’s Playback
         spotifyApi.setRepeat("context").then(
           function () {
@@ -363,7 +385,7 @@ const Dashboard = ({ props, code }) => {
             console.log("Something went wrong!", err);
           }
         );
-      } else if (repeatSong.repeatTrack) {
+      } else {
         // Toggle Repeat For User’s Playback
         spotifyApi.setRepeat("track").then(
           function () {
@@ -425,7 +447,7 @@ const Dashboard = ({ props, code }) => {
         // Skip User’s Playback To Next Track
         spotifyApi.skipToNext().then(
           function () {
-            //console.log('Skip to next');
+            // console.log('Skip to next');
           },
           function (err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -555,20 +577,6 @@ const Dashboard = ({ props, code }) => {
   }
 
   function clickSong(event, song) {
-    if (!activeDevice) {
-      // Get a User's Available Devices
-      spotifyApi.getMyDevices().then(
-        function (data) {
-          let availableDevices = data.body.devices;
-          if (availableDevices.length > 0) {
-            setActiveDevice(true);
-          }
-        },
-        function (err) {
-          console.log("Something went wrong!", err);
-        }
-      );
-    }
     if (nowPlaying.name !== event.target.getAttribute("alt")) {
       setSongClickedCounter(songClickedCounter + 1)
       setCurrentTrackPosition(song.position);
@@ -623,7 +631,8 @@ const Dashboard = ({ props, code }) => {
     <div>
         <div 
             style={{
-                display: !loading && activeDevice && nowPlaying.image ? "block" : "none",
+                display: !loading && nowPlaying.image ? "block" : "none",
+                // display: !loading && activeDevice && nowPlaying.image ? "block" : "none",
             }}
             ref={backgroundColor}  
             className={classes.body}>
@@ -710,6 +719,8 @@ const Dashboard = ({ props, code }) => {
                       currentPosition={currentPosition}
                       paused={paused}
                       currentTrack={currentTrack}
+                      sliderPosition={sliderPosition}
+                      setSliderPosition={setSliderPosition}
                       />
                   </div>
                   {/* <div className={classes.alignItemsAndJustifyContent}>
@@ -761,7 +772,7 @@ const Dashboard = ({ props, code }) => {
                     tracks={tracks}
                     clickSong={clickSong}
                     spinner={spinner}
-                    activeDevice={activeDevice}
+                    // activeDevice={activeDevice}
                     />
                 </div>
             </div>

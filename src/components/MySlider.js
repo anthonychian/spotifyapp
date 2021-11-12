@@ -33,27 +33,26 @@ export default function MySlider(props) {
 
     const theme = useTheme();
     let duration = props.currentPosition.total / 1000;
-    let position = props.currentPosition.position / 1000;
+    // let position = props.currentPosition.position / 1000;
 
-    const [sliderPosition, setSliderPosition] = useState(position);
+    // const [sliderPosition, setSliderPosition] = useState(0);
     const [sliderPause, setSliderPause] = useState(false)
 
-    if (isNaN(props.currentPosition.total) || isNaN(props.currentPosition.position)) {
-        duration = 0;
-        position = 0;
-    }
+  
     
     useEffect(() => {
         const timeoutID = setTimeout(() => {
-            if(!props.paused.paused && !sliderPause)
-                setSliderPosition(sliderPosition + 1)
+            if(!props.paused.paused && !sliderPause) {
+                props.setSliderPosition(props.sliderPosition + 1)
+            }
         }, 1000);
         return () => clearTimeout(timeoutID);
     });
 
     useEffect(() => {
-        console.log('setting to 0')
-        setSliderPosition(0)
+        // console.log('setting to 0')
+        props.setSliderPosition(props.currentPosition.position / 1000)
+        //props.setSliderPosition(0)
     }, [props.currentTrack]);
 
 
@@ -64,10 +63,8 @@ export default function MySlider(props) {
     }
     function handleEvent(event) {
         if (event.type === "mousedown" || event.type === "touchstart") {
-            console.log('down')
             setSliderPause(true)
         } else {
-            console.log('up')
             setSliderPause(false)
         }
     }
@@ -79,7 +76,7 @@ export default function MySlider(props) {
                 <Slider
                     aria-label="time-indicator"
                     size="small"
-                    value={sliderPosition}
+                    value={props.sliderPosition}
                     min={0}
                     step={1}
                     onMouseDown={handleEvent}
@@ -89,7 +86,7 @@ export default function MySlider(props) {
                     max={duration}
                     onChange={(_, value) => {
                         // Only update the UI. Do nothing to the audio. This is similar to youtube music.
-                        setSliderPosition(value)
+                        props.setSliderPosition(value)
                     }}
                     onChangeCommitted={(_, value) => {
                         props.setCurrentPosition({
@@ -136,8 +133,8 @@ export default function MySlider(props) {
                     justifyContent: 'space-between',
                     mt: -2,
                 }}>
-                    <TinyText>{formatDuration(sliderPosition)}</TinyText>
-                    <TinyText>-{formatDuration(duration - sliderPosition)}</TinyText>
+                    <TinyText>{formatDuration(props.sliderPosition)}</TinyText>
+                    <TinyText>-{formatDuration(duration - props.sliderPosition)}</TinyText>
                 </Box>
             </Widget>
         </Box>

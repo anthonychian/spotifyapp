@@ -13,20 +13,20 @@ import Tooltip from '@mui/material/Tooltip';
 //import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-import { makeStyles } from '@material-ui/core/styles'
+// import { makeStyles } from '@material-ui/core/styles'
 
 
-const useStyles = makeStyles(() => ({
-    container: {
-        // zIndex: 0,
-        // ['@media (max-width:1282px)']: { // eslint-disable-line no-useless-computed-key
-        //   display: 'none',
-        // }
-      }
-  }))
+// const useStyles = makeStyles(() => ({
+//     container: {
+//         zIndex: 0,
+//         ['@media (max-width:1282px)']: { // eslint-disable-line no-useless-computed-key
+//           display: 'none',
+//         }
+//       }
+//   }))
 
 export default function AccountMenu(props) {
-  const classes = useStyles()
+  // const classes = useStyles()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -36,7 +36,7 @@ export default function AccountMenu(props) {
     setAnchorEl(null);
   };
   return (
-    <div className={classes.container}>
+    <div>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
         <Box sx={{ backgroundColor: '#191414', borderRadius: '2em' }}>
         <Tooltip title="Account settings">
