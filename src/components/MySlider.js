@@ -33,26 +33,20 @@ export default function MySlider(props) {
 
     const theme = useTheme();
     let duration = props.currentPosition.total / 1000;
-    // let position = props.currentPosition.position / 1000;
 
-    // const [sliderPosition, setSliderPosition] = useState(0);
     const [sliderPause, setSliderPause] = useState(false)
-
-  
     
     useEffect(() => {
         const timeoutID = setTimeout(() => {
             if(!props.paused.paused && !sliderPause) {
                 props.setSliderPosition(props.sliderPosition + 1)
             }
-        }, 1000);
+        }, 950);
         return () => clearTimeout(timeoutID);
     });
 
     useEffect(() => {
-        // console.log('setting to 0')
         props.setSliderPosition(props.currentPosition.position / 1000)
-        //props.setSliderPosition(0)
     }, [props.currentTrack]);
 
 

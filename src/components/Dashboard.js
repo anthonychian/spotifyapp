@@ -197,8 +197,6 @@ const Dashboard = ({ props, code }) => {
         player.addListener('player_state_changed', state => { 
 
           if (testPosition !== state.position) {
-
-            console.log(state.position)
             setSliderPosition(state.position / 1000)
             setCurrentPosition({
               position: state.position,

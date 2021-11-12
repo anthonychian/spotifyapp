@@ -46,9 +46,10 @@ export default function PlayerButtons(props) {
             <IconButton
                 sx={{ fontSize: 80, color: "white" }}
                 aria-label={props.paused.paused ? true : false}
-                onClick={() => props.setPaused({
-                  paused: !props.paused.paused,
-                  clicked: true
+                onClick={() => 
+                  props.setPaused({
+                    paused: !props.paused.paused,
+                    clicked: true
                 })}>
                 {props.paused.paused ? (
                 <PlayArrowRounded
