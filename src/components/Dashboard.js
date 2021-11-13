@@ -115,10 +115,6 @@ function HideOnScroll(props) {
 
 const Dashboard = ({ props, code }) => {
 
-  let testSong = ''
-  let testPosition = 0;
-  let testRepeat = ''
-  let testShuffle = ''
   const classes = useStyles();
 
   const backgroundColor = useRef(null);
@@ -171,6 +167,11 @@ const Dashboard = ({ props, code }) => {
   useEffect(() => {
     
     function spotifyPlayback() {
+      let testSong = ''
+      let testPosition = 0;
+      let testRepeat = ''
+      let testShuffle = ''
+      
       if(scriptLoading){
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -195,7 +196,7 @@ const Dashboard = ({ props, code }) => {
       
         // Playback status updates
         player.addListener('player_state_changed', state => { 
-
+          
           if (testPosition !== state.position) {
             setSliderPosition(state.position / 1000)
             setCurrentPosition({
@@ -218,14 +219,15 @@ const Dashboard = ({ props, code }) => {
             state.track_window.current_track.artists.map(
               (x) => (allArtists += ` ${x.name}, `)
             );
+            
             allArtists = allArtists.slice(0, allArtists.length - 2);
             setCurrentTrack(state.track_window.current_track.name)
             setNowPlaying({
               name: state.track_window.current_track.name,
               artist: allArtists,
-              image: state.track_window.current_track.album.images[0].url,
-              imageLow: state.track_window.current_track.album.images[1].url,
-              imageHigh: state.track_window.current_track.album.images[2].url,
+              imageHigh: state.track_window.current_track.album.images[0].url,
+              image: state.track_window.current_track.album.images[1].url,
+              imageLow: state.track_window.current_track.album.images[2].url,
               position: state.position,
             });
             
@@ -238,7 +240,8 @@ const Dashboard = ({ props, code }) => {
               optimizeQuery: true,
             };
             getLyrics(options).then((lyrics) => {
-              setLyrics(lyrics)
+              if (lyrics === null) setLyrics('')
+              else setLyrics(lyrics)
             });
           }
           testSong = state.track_window.current_track.name;
@@ -523,7 +526,6 @@ const Dashboard = ({ props, code }) => {
           if (userPlaylists.body.items.length > 0) {
             // update the state of playlists once
             setPlaylists(userPlaylists.body.items);
-            //console.log(userPlaylists.body.items)
 
             if (!currentPlaylist) {
               setCurrentPlaylist(userPlaylists.body.items[0].id);
@@ -541,15 +543,14 @@ const Dashboard = ({ props, code }) => {
                     );
                     allArtists = allArtists.slice(0, allArtists.length - 2);
                   }
-
                   setTracks((tracks) => [
                     ...tracks,
                     {
                       name: song.track.name,
                       artist: allArtists,
                       lyricsArtist: song.track.artists[0].name,
-                      image: song.track.album.images[1].url,
                       imageHigh: song.track.album.images[0].url,
+                      image: song.track.album.images[1].url,
                       imageLow: song.track.album.images[2].url,
                       link: song.track.uri,
                       position: index,

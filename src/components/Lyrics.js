@@ -44,15 +44,16 @@ export default function Lyrics(props) {
   return (
     <div>
         <Button  sx={{fontSize:'0.7em', color: 'white'}}onClick={handleClickOpen('body')}>Lyrics</Button>
-      {/* <Button onClick={handleClickOpen('body')}>Body</Button> */}
+      {/* <Button onClick={handleClickOpen('paper')}>Body</Button> */}
       <Dialog
+        transitionDuration={300}
         open={open}
         onClose={handleClose}
         scroll={scroll}
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
-        <DialogTitle id="scroll-dialog-title">Lyrics</DialogTitle>
+        <DialogTitle id="scroll-dialog-title">{props.name}</DialogTitle>
         <DialogContent dividers={scroll === 'paper'}>
           <DialogContentText
             id="scroll-dialog-description"
@@ -61,7 +62,11 @@ export default function Lyrics(props) {
             component={'span'}
           >
             <div>
-            {formatLyrics(props.lyrics.split('\n')).map(
+            {(props.lyrics === '') ? 
+            <p>
+                N/A
+            </p> :
+            formatLyrics(props.lyrics.split('\n')).map(
                 (text, index) => 
                 
                     (text === '\n' && index !== 0) ?

@@ -53,7 +53,7 @@ export default function NowPlaying(props) {
                     title={props.nowPlaying.name}         
                     subtitle={props.nowPlaying.artist}
                     actionIcon={
-                        <Lyrics lyrics={props.lyrics}/>
+                        <Lyrics name={props.nowPlaying.name} lyrics={props.lyrics}/>
                     }
                 />
             </ImageListItem>

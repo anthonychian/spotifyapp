@@ -47,6 +47,7 @@ export default function MySlider(props) {
 
     useEffect(() => {
         props.setSliderPosition(props.currentPosition.position / 1000)
+        // eslint-disable-next-line
     }, [props.currentTrack]);
 
 
