@@ -456,16 +456,30 @@ const Dashboard = ({ props, code }) => {
           }
         );
       } else {
-        // Skip User’s Playback To Previous Track
-        spotifyApi.skipToPrevious().then(
-          function () {
-            //console.log('Skip to previous');
-          },
-          function (err) {
-            //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-            console.log("Something went wrong!", err);
-          }
-        );
+        if (sliderPosition > 2) {
+          spotifyApi.seek(0).then(
+            function () {
+              setSliderPosition(0)
+              //console.log('Seek to ' + currentPosition.position_ms);
+            },
+            function (err) {
+              //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+              console.log("Something went wrong!", err);
+            }
+          );
+        }
+        else {
+          // Skip User’s Playback To Previous Track
+          spotifyApi.skipToPrevious().then(
+            function () {
+              //console.log('Skip to previous');
+            },
+            function (err) {
+              //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+              console.log("Something went wrong!", err);
+            }
+          );
+        }
       }
     }
     if (skipSong.clicked) nextOrPrevious();
