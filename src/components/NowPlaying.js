@@ -4,7 +4,7 @@ import { Palette } from 'react-palette';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import { makeStyles } from '@material-ui/core/styles'
-
+import Zoom from 'react-reveal/Zoom';
 
 const useStyles = makeStyles(theme => ({
     coverImg: {
@@ -17,7 +17,14 @@ const useStyles = makeStyles(theme => ({
         ['@media (min-width:1282px)']: { // eslint-disable-line no-useless-computed-key
             width: '33%',
         },
-      }
+      },
+      alignItemsAndJustifyContent: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%", 
+        width: "100%"
+      },
   }))
 
 
@@ -40,7 +47,9 @@ export default function NowPlaying(props) {
                     props.changeColor(data.vibrant)
                 )}
             </Palette>
-            {/* <ImageListItem sx={{ width: '30%', height: 'auto' }}> */}
+            
+            <Zoom left opposite cascade>
+            <div className={classes.alignItemsAndJustifyContent}>
             <ImageListItem className={classes.coverImg}>
                 <img 
                     src={`${props.nowPlaying.image}`}
@@ -57,6 +66,8 @@ export default function NowPlaying(props) {
                     }
                 />
             </ImageListItem>
+            </div>
+            </Zoom>
         </div>
     )
 }

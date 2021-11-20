@@ -10,11 +10,29 @@ import RepeatIcon from '@mui/icons-material/Repeat';
 import RepeatOnIcon from '@mui/icons-material/RepeatOn';
 import RepeatOneIcon from '@mui/icons-material/RepeatOne';
 
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles(theme => ({
+  alignItemsAndJustifyContent: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+    icon: {
+      fontSize: '2.5rem',
+      color: 'white'
+    },
+}))
+
+
 const mainIconColor = 'white'
+
 export default function PlayerButtons(props) {
+
+  const classes = useStyles()
     return (
-        <div style={{"zIndex": "0"}}>
-            <IconButton 
+        <div className={classes.alignItemsAndJustifyContent}>
+            <IconButton
                 sx={{ fontSize: 80, color: "white" }}
                 aria-label="next song"
                 onClick={() => props.setShuffle({
@@ -23,12 +41,12 @@ export default function PlayerButtons(props) {
                 })}>
                   {props.shuffle.shuffle ? (
                     <ShuffleOnIcon 
-                      sx={{ fontSize: '1.5rem' }}
+                      sx={{ fontSize: '1rem' }}
                       htmlColor={mainIconColor}
                     />
                     ) : (
                     <ShuffleIcon 
-                      sx={{ fontSize: '1.5rem' }}
+                      sx={{ fontSize: '1rem' }}
                       htmlColor={mainIconColor}
                     />
                   )}
@@ -38,7 +56,7 @@ export default function PlayerButtons(props) {
                 aria-label="previous song"
                 onClick={() => props.setSkipSong({ skip:false, clicked: true, date: new Date() })}>
                 <FastRewindRounded 
-                  sx={{ fontSize: '3rem' }}
+                  sx={{ fontSize: '1.5rem' }}
                   htmlColor={mainIconColor}
                 />
             </IconButton>
@@ -53,11 +71,11 @@ export default function PlayerButtons(props) {
                 })}>
                 {props.paused.paused ? (
                 <PlayArrowRounded
-                  sx={{ fontSize: '3.5rem' }}
+                  sx={{ fontSize: '2rem' }}
                   htmlColor={mainIconColor}
                 />
                 ) : (
-                <PauseRounded sx={{ fontSize: '3.5rem' }} htmlColor={mainIconColor} />
+                <PauseRounded sx={{ fontSize: '2rem' }} htmlColor={mainIconColor} />
               )}
             </IconButton>
 
@@ -66,7 +84,7 @@ export default function PlayerButtons(props) {
                 aria-label="next song"
                 onClick={() => props.setSkipSong({skip: true, clicked: true, date: new Date()})}>
                 <FastForwardRounded 
-                  sx={{ fontSize: '3rem' }}
+                  sx={{ fontSize: '1.5rem' }}
                   htmlColor={mainIconColor}
                 />
             </IconButton>
@@ -80,7 +98,7 @@ export default function PlayerButtons(props) {
                   clicked: true
                 })}>
                 <RepeatIcon 
-                  sx={{ fontSize: '1.5rem' }}
+                  sx={{ fontSize: '1rem' }}
                   htmlColor={mainIconColor}
                 />
             </IconButton>}
@@ -92,7 +110,7 @@ export default function PlayerButtons(props) {
                   clicked: true
                 })}>
                 <RepeatOnIcon 
-                  sx={{ fontSize: '1.5rem' }}
+                  sx={{ fontSize: '1rem' }}
                   htmlColor={mainIconColor}
                   />
             </IconButton>}
@@ -105,7 +123,7 @@ export default function PlayerButtons(props) {
                   clicked: true
                 })}>
                 <RepeatOneIcon 
-                  sx={{ fontSize: '1.5rem' }}
+                  sx={{ fontSize: '1rem' }}
                   htmlColor={mainIconColor}
                   />
             </IconButton>}

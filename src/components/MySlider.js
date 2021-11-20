@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 
 const Widget = styled('div')(() => ({
-    padding: 16,
-    borderRadius: 16,
+    // padding: 16,
+    // borderRadius: 16,
     width: 343,
     maxWidth: '100%',
     ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
@@ -16,7 +16,7 @@ const Widget = styled('div')(() => ({
     margin: 'auto',
     position: 'relative',
     zIndex: 0,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    // backgroundColor: 'rgba(0,0,0,0.6)',
     backdropFilter: 'blur(40px)',
     opacity: '70%',
   }));

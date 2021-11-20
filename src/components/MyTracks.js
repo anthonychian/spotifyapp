@@ -4,12 +4,16 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ListSubheader from '@mui/material/ListSubheader';
-import ImageListItemBar from '@mui/material/ImageListItemBar';
-import IconButton from '@mui/material/IconButton';
+// import ImageListItemBar from '@mui/material/ImageListItemBar';
+// import IconButton from '@mui/material/IconButton';
+// import Pulse from 'react-reveal/Pulse';
+import Track from './Track'
 
 
 export default function MyTracks(props) {
     const [loading, setLoading] = useState(true);
+    // const [hover, setHover] = useState(false);
+
     useEffect(() => {
         const timeoutID = setTimeout(() => {
             setLoading(false);
@@ -17,6 +21,10 @@ export default function MyTracks(props) {
             setLoading(true);
             return () => clearTimeout(timeoutID);
     }, [props.spinner]);
+
+    // function handleMouseHover() {
+    //     setHover(!hover);
+    // }
 
 
     return (
@@ -26,55 +34,20 @@ export default function MyTracks(props) {
                 display: loading ? "none" : "flex",
                 alignItems: 'center',
                 justifyContent: 'center',
+                marginBottom: '100px',
                 height: "100%", 
                 width: "100%"
             }}>
+                
                 <ImageList sx={{ width: '1', height: '1'  }} cols={3}>
                     <ImageListItem key="Subheader" cols={3}>
                         <ListSubheader component="div">{props.tracks.length} Songs</ListSubheader>
                     </ImageListItem>
                     {props.tracks.map((track, idx) => (
-                        <ImageListItem 
-                            onClick={(e) => {
-                                props.clickSong(e, {
-                                    name: track.name, 
-                                    artist: track.artist,
-                                    lyricsArtist: track.lyricsArtist, 
-                                    image: track.image,
-                                    imageHigh: track.imageHigh,
-                                    imageLow: track.imageLow,
-                                    position: track.position
-                                });
-                            }} 
-                            key = {track.id + '000' + idx}>
-                            
-                            <div style={{ cursor: 'pointer' }}>
-                                <img
-                                    src={`${track.imageLow}`}
-                                    srcSet={`${track.image} 1x, ${track.imageHigh} 2x`}
-                                    height="auto"
-                                    width="100%"
-                                    alt={track.name}
-                                    longdesc={track.link}
-                                    loading="lazy"
-                                />
-                            </div>
-                            
-                            <ImageListItemBar
-                                title={track.name}         
-                                subtitle={track.artist}
-                                actionIcon={
-                                <IconButton
-                                    sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                                    aria-label={`info about ${track.name}`}
-                                >
-                                </IconButton>
-                                }
-                            />
-                        
-                        </ImageListItem>
+                        <Track track={track} idx={idx} clickSong={props.clickSong} /> 
                     ))}
                 </ImageList>
+               
             </div>
             <div 
                 style={{

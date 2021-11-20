@@ -5,8 +5,8 @@ import AccountMenu from "./AccountMenu";
 import MyPlaylists from "./MyPlaylists";
 import MyTracks from "./MyTracks";
 import NowPlaying from "./NowPlaying";
-import PlayerButtons from "./PlayerButtons";
-import MySlider from "./MySlider";
+// import PlayerButtons from "./PlayerButtons";
+// import MySlider from "./MySlider";
 import TrackInfo from "./TrackInfo";
 import PlaylistName from "./PlaylistName";
 
@@ -20,14 +20,15 @@ import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 import Marquee from "react-fast-marquee";
 
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import useScrollTrigger from '@mui/material/useScrollTrigger';
-import Slide from '@mui/material/Slide';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+// import AppBar from '@mui/material/AppBar';
+// import Toolbar from '@mui/material/Toolbar';
+// import Typography from '@mui/material/Typography';
+// import useScrollTrigger from '@mui/material/useScrollTrigger';
+// import Slide from '@mui/material/Slide';
+// import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 import { getLyrics } from 'genius-lyrics-api';
+import MyAppBar from "./MyAppBar";
 
 
 
@@ -43,24 +44,24 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
     width: "100vw",
     minHeight: "900px",
-    background: "linear-gradient(rgba(0,0,0,0.8),transparent)",
+    background: "linear-gradient(to bottom, rgba(0,0,0,0.8),transparent)",
   },
-  bottomBar: {
-    height: '10%',
-    backgroundColor: '#191414!important',
-    ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
-      height: '15%',
-    }
-  },
+  // bottomBar: {
+  //   height: '10%',
+  //   backgroundColor: '#191414!important',
+  //   ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+  //     height: '15%',
+  //   }
+  // },
   avatar: {
     padding: "1em 0 0 1em",
-    ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+    ['@media (max-width:1000px)']: { // eslint-disable-line no-useless-computed-key
       display: 'none',
     }
   },
   avatar2: {
     display: "none",
-    ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
+    ['@media (max-width:1000px)']: { // eslint-disable-line no-useless-computed-key
       display: 'flex',
       alignItems: "center",
       justifyContent: "center",
@@ -97,21 +98,21 @@ const spotifyApi = new SpotifyWebApi({
 });
 
 
-function HideOnScroll(props) {
-  const { children, window } = props;
-  // Note that you normally won't need to set the window ref as useScrollTrigger
-  // will default to window.
-  // This is only being set here because the demo is in an iframe.
-  const trigger = useScrollTrigger({
-    target: window ? window() : undefined,
-  });
+// function HideOnScroll(props) {
+//   const { children, window } = props;
+//   // Note that you normally won't need to set the window ref as useScrollTrigger
+//   // will default to window.
+//   // This is only being set here because the demo is in an iframe.
+//   const trigger = useScrollTrigger({
+//     target: window ? window() : undefined,
+//   });
 
-  return (
-    <Slide appear={false} direction="up" in={!trigger}>
-      {children}
-    </Slide>
-  );
-}
+//   return (
+//     <Slide appear={false} direction="up" in={!trigger}>
+//       {children}
+//     </Slide>
+//   );
+// }
 
 const Dashboard = ({ props, code }) => {
 
@@ -142,6 +143,7 @@ const Dashboard = ({ props, code }) => {
   const [shuffle, setShuffle] = useState({});
   const [scriptLoading, setScriptLoading] = useState(true);
   const [songClickedCounter, setSongClickedCounter] = useState(0);
+  const [songChange, setSongChange] = useState(false)
   const [lyrics, setLyrics] = useState('');
   const [sliderPosition, setSliderPosition] = useState(0);
   const [currentPosition, setCurrentPosition] = useState({
@@ -215,6 +217,13 @@ const Dashboard = ({ props, code }) => {
           
           if (testSong !== state.track_window.current_track.name) {
             // console.log('song changed')
+            if (songChange) {
+              setSongChange(false)
+            }
+            else { 
+              setSongChange(true)
+            }
+
             let allArtists = " ";
             state.track_window.current_track.artists.map(
               (x) => (allArtists += ` ${x.name}, `)
@@ -663,46 +672,23 @@ const Dashboard = ({ props, code }) => {
                       particlesOn={particlesOn} setParticlesOn={setParticlesOn}
                     />
                 </div>
-                {(document.documentElement.scrollTop !== 0) && <HideOnScroll {...props}>
-                  <AppBar className={classes.bottomBar} sx={{ top: 'auto', bottom: 0}}>
-                    <Toolbar>
-                      <img style={{marginTop: '10px'}}alt= {nowPlaying.name} src={nowPlaying.imageLow}/>
-                      <Typography variant="h7" component="div">
-                        <div style={{ position: 'relative', display: 'runIn', marginLeft: '1em'}}>
-                          <span style={{
-                            position: 'absolute', 
-                            width: '220px',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            fontSize: '0.9em'}}> 
-                              {nowPlaying.name}
-                          </span>
-                          <br/>
-                          <span style={{
-                            position: 'absolute', 
-                            width: '220px',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            color: 'grey', 
-                            fontSize: '0.8em'}}> 
-                              {nowPlaying.artist} 
-                          </span>
-                        </div>
-                      </Typography>
-                      {/* <div style={{position: 'relative', width: '100%',textAlign: 'right'}}>
-                        <span style={{cursor: 'pointer'}} onClick={clickScrollUp}>
-                        </span>
-                      </div> */}
-                      <div style={{ position: 'relative', height: '100%', width: '4em',cursor: 'pointer', marginLeft: 'auto'}} onClick={clickScrollUp}>
-                        <div style={{position: 'absolute', paddingLeft: '50%', top: '40%'}}>
-                          <KeyboardArrowUpIcon />
-                        </div>
-                      </div>
-                    </Toolbar>
-                  </AppBar>
-                </HideOnScroll>}
+                
+                <MyAppBar 
+                  nowPlaying={nowPlaying} 
+                  clickScrollUp={clickScrollUp}
+                  paused={paused}
+                  setPaused={setPaused}
+                  setSkipSong={setSkipSong}
+                  shuffle={shuffle}
+                  setShuffle={setShuffle}
+                  repeatSong={repeatSong}
+                  setRepeatSong={setRepeatSong}
+                  setCurrentPosition={setCurrentPosition}
+                  currentPosition={currentPosition}
+                  currentTrack={currentTrack}
+                  sliderPosition={sliderPosition}
+                  setSliderPosition={setSliderPosition}
+                />
 
                 <Marquee
                 className={classes.trackInfoContainer}
@@ -713,29 +699,9 @@ const Dashboard = ({ props, code }) => {
                 </Marquee>
 
                 <div style={{ paddingBottom: "1em" }}>
-                  <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying} lyrics={lyrics} />
+                  <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying} lyrics={lyrics} songChange={songChange}/>
 
-                  <div className={classes.alignItemsAndJustifyContent}>
-                      <PlayerButtons
-                      paused={paused}
-                      setPaused={setPaused}
-                      setSkipSong={setSkipSong}
-                      shuffle={shuffle}
-                      setShuffle={setShuffle}
-                      repeatSong={repeatSong}
-                      setRepeatSong={setRepeatSong}
-                      />
-                  </div>
-                  <div className={classes.alignItemsAndJustifyContent}>
-                      <MySlider
-                      setCurrentPosition={setCurrentPosition}
-                      currentPosition={currentPosition}
-                      paused={paused}
-                      currentTrack={currentTrack}
-                      sliderPosition={sliderPosition}
-                      setSliderPosition={setSliderPosition}
-                      />
-                  </div>
+                  
                   {/* <div className={classes.alignItemsAndJustifyContent}>
                     <Lyrics lyrics={lyrics}/>
                   </div> */}
