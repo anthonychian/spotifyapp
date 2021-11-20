@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
         height: '11%',
         backgroundColor: '#191414!important',
         ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
-            height: '13%',
+            height: '15%',
         }
     },
   }));
