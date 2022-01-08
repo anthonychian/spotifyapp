@@ -1,6 +1,6 @@
 # spotifyapp
 
-A web application using the Spotify API. Features real time tracking of the a user's currently playing song. Displays and allows user to select between playlists and their respective songs.
+A web application using Spotify API. Features real time tracking of the user's currently playing song. Displays and allows user to select between playlists and their respective songs. Fetches song lyrics using Genius API.
 
 # Installation
 
