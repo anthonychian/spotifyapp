@@ -16,6 +16,8 @@ const useStyles = makeStyles((theme) => ({
     },
     cover: {
         marginTop: '10px',
+        height: '5em',
+        width: '5em',
         display: 'block',
         ['@media (max-width:1000px)']: { // eslint-disable-line no-useless-computed-key
             display: 'none'
@@ -50,7 +52,7 @@ export default function MyAppBar(props) {
     return (
         <AppBar className={classes.bottomBar} sx={{ top: 'auto', bottom: 0}}>
         <Toolbar>
-          <img className={classes.cover} alt= {props.nowPlaying.name} src={props.nowPlaying.imageHigh}/>
+          <img className={classes.cover} alt= {props.nowPlaying.name} src={props.nowPlaying.imageLow}/>
           <Typography variant="h7" component="div">
             <div className={classes.text}>
               <span style={{
