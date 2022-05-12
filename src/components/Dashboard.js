@@ -231,15 +231,12 @@ const Dashboard = ({ props, code }) => {
             
             allArtists = allArtists.slice(0, allArtists.length - 2);
             setCurrentTrack(state.track_window.current_track.name)
-            console.log(state.track_window.current_track.album.images[0].url)
-            console.log(state.track_window.current_track.album.images[1].url)
-            console.log(state.track_window.current_track.album.images[2].url)
             setNowPlaying({
               name: state.track_window.current_track.name,
               artist: allArtists,
-              imageHigh: state.track_window.current_track.album.images[0].url,
-              image: state.track_window.current_track.album.images[1].url,
-              imageLow: state.track_window.current_track.album.images[2].url,
+              imageHigh: state.track_window.current_track.album.images[2].url,
+              image: state.track_window.current_track.album.images[0].url,
+              imageLow: state.track_window.current_track.album.images[1].url,
               position: state.position,
             });
             
