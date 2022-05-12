@@ -139,7 +139,7 @@ const Dashboard = ({ props, code }) => {
   const [skipSong, setSkipSong] = useState({});
   const [loading, setLoading] = useState(true);
   const [spinner, setSpinner] = useState(0);
-  const [particlesOn, setParticlesOn] = useState(false);
+  const [particlesOn, setParticlesOn] = useState(true);
   const [shuffle, setShuffle] = useState({});
   const [scriptLoading, setScriptLoading] = useState(true);
   const [songClickedCounter, setSongClickedCounter] = useState(0);
