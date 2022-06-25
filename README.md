@@ -6,7 +6,7 @@ A web application using Spotify API. Features real time tracking of the user's c
 
 ## Music player
 
-[![cover1b81277c1187fe71.md.gif](https://s8.gifyu.com/images/cover1b81277c1187fe71.md.gif)](https://gifyu.com/image/SHypf)
+![](https://github.com/anthonychian/spotifyapp/cover.gif)
 
 In the project directory, you can run:
 
