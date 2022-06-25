@@ -6,7 +6,7 @@ A web application using Spotify API. Features real time tracking of the user's c
 
 ## Music player
 
-![](https://github.com/anthonychian/spotifyapp/blob/main/cover.gif)
+![](https://github.com/anthonychian/spotifyapp/blob/main/song.gif)
 
 ## Dynamic background
 
