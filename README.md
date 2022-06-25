@@ -1,16 +1,12 @@
-# spotifyapp
+# Spotify Music Visualizer
 
 A web application using Spotify API. Features real time tracking of the user's currently playing song. Displays and allows user to select between playlists and their respective songs. Fetches song lyrics using Genius API.
 
-# Installation
+# 💻 Demo
 
-### `npm install`
+## Music player
 
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
+<img align="center" alt="coding" width="100%" src="https://s8.gifyu.com/images/cover1b81277c1187fe71.md.gif">
 
 In the project directory, you can run:
 
