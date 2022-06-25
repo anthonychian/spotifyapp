@@ -15,3 +15,8 @@ A web application using Spotify API. Features real time tracking of the user's c
 ## Song selection
 
 ![](https://github.com/anthonychian/spotifyapp/blob/main/playlist.gif)
+
+## Song lyrics
+
+![](https://github.com/anthonychian/spotifyapp/blob/main/lyrics.gif)
+
