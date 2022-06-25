@@ -6,7 +6,9 @@ A web application using Spotify API. Features real time tracking of the user's c
 
 ## Music player
 
-<a href="https://gifyu.com/image/SHypf"><img src="https://s8.gifyu.com/images/cover1b81277c1187fe71.md.gif" alt="cover1b81277c1187fe71.gif" border="0" /></a>
+<img src="https://s8.gifyu.com/images/cover1b81277c1187fe71.md.gif" alt="cover1b81277c1187fe71.gif" border="0" />
+
+
 In the project directory, you can run:
 
 ### `npm start`
