@@ -1,6 +1,6 @@
 # Spotify Music Visualizer
 
-A web application using Spotify API. Features real time tracking of the user's currently playing song. Displays and allows user to select between playlists and their respective songs. Fetches song lyrics using Genius API.
+A web application using Spotify API. Features real time tracking of the user's currently playing song. Displays and allows user to select between playlists and their respective songs. Fetches song lyrics using Genius API. **Requires private access and spotify premium account**
 
 # 💻 Demo
 
