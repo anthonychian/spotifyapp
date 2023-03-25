@@ -21,7 +21,7 @@ export default function Lyrics(props) {
 
   function formatLyrics(lyrics) {
     let res = [];
-    lyrics.forEach((element) => {
+    lyrics?.forEach((element) => {
         if (element.charAt(0) === '[' ) {
             res.push('\n')
             res.push(element);
@@ -66,9 +66,8 @@ export default function Lyrics(props) {
             <p>
                 N/A
             </p> :
-            formatLyrics(props.lyrics.split('\n')).map(
+            formatLyrics(props.lyrics?.split('\n')).map(
                 (text, index) => 
-                
                     (text === '\n' && index !== 0) ?
                     <div key={index}>
                         <br/>
@@ -76,7 +75,6 @@ export default function Lyrics(props) {
                     <div key={index}>
                         {text}
                     </div>
-
                 )
               }
               </div>

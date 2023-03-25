@@ -5,6 +5,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import { makeStyles } from '@material-ui/core/styles'
 import Zoom from 'react-reveal/Zoom';
+// import Fade from "react-awesome-reveal";
 
 const useStyles = makeStyles(theme => ({
     coverImg: {
@@ -48,25 +49,25 @@ export default function NowPlaying(props) {
                 )}
             </Palette>
             
-            <Zoom left opposite cascade>
-            <div className={classes.alignItemsAndJustifyContent}>
-            <ImageListItem className={classes.coverImg}>
-                <img 
-                    src={`${props.nowPlaying.image}`}
-                    srcSet={`${props.nowPlaying.imageHigh} 1x`}
-                    alt={props.nowPlaying.name}
-                    loading="lazy"
-                />
-                
-                <ImageListItemBar
-                    title={props.nowPlaying.name}         
-                    subtitle={props.nowPlaying.artist}
-                    actionIcon={
-                        <Lyrics name={props.nowPlaying.name} lyrics={props.lyrics}/>
-                    }
-                />
-            </ImageListItem>
-            </div>
+            <Zoom>
+                <div className={classes.alignItemsAndJustifyContent}>
+                    <ImageListItem className={classes.coverImg}>
+                        <img 
+                            src={`${props.nowPlaying.image}`}
+                            srcSet={`${props.nowPlaying.imageHigh} 1x`}
+                            alt={props.nowPlaying.name}
+                            loading="lazy"
+                        />
+                        
+                        <ImageListItemBar
+                            title={props.nowPlaying.name}         
+                            subtitle={props.nowPlaying.artist}
+                            actionIcon={
+                                <Lyrics name={props.nowPlaying.name} lyrics={props.lyrics}/>
+                            }
+                        />
+                    </ImageListItem>
+                </div>
             </Zoom>
         </div>
     )

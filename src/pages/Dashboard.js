@@ -1,36 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import MyBubbles from "./MyBubbles";
-import AccountMenu from "./AccountMenu";
-import MyPlaylists from "./MyPlaylists";
-import MyTracks from "./MyTracks";
-import NowPlaying from "./NowPlaying";
-// import PlayerButtons from "./PlayerButtons";
-// import MySlider from "./MySlider";
-import TrackInfo from "./TrackInfo";
-import PlaylistName from "./PlaylistName";
-
-
-import useAuth from "../useAuth";
-import SpotifyWebApi from "spotify-web-api-node";
-// import axios from "axios";
+import MyBubbles from "../components/background/MyBubbles";
+import AccountMenu from "../components/settings/AccountMenu";
+import MyPlaylists from "../components/playlists/MyPlaylists";
+import MyTracks from "../components/tracks/MyTracks";
+import NowPlaying from "../components/song-ui/NowPlaying";
+import MyAppBar from "../components/bottom-ui/MyAppBar";
+import TrackName from "../components/tracks/TrackName";
+import PlaylistName from "../components/playlists/PlaylistName";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 import Marquee from "react-fast-marquee";
 
-// import AppBar from '@mui/material/AppBar';
-// import Toolbar from '@mui/material/Toolbar';
-// import Typography from '@mui/material/Typography';
-// import useScrollTrigger from '@mui/material/useScrollTrigger';
-// import Slide from '@mui/material/Slide';
-// import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
 import { getLyrics } from 'genius-lyrics-api';
-import MyAppBar from "./MyAppBar";
-
-
+import useAuth from "../useAuth";
+import SpotifyWebApi from "spotify-web-api-node";
 
 const useStyles = makeStyles((theme) => ({
   alignItemsAndJustifyContent: {
@@ -46,13 +32,6 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "900px",
     background: "linear-gradient(to bottom, rgba(0,0,0,0.8),transparent)",
   },
-  // bottomBar: {
-  //   height: '10%',
-  //   backgroundColor: '#191414!important',
-  //   ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
-  //     height: '15%',
-  //   }
-  // },
   avatar: {
     padding: "1em 0 0 1em",
     ['@media (max-width:1000px)']: { // eslint-disable-line no-useless-computed-key
@@ -96,23 +75,6 @@ const useStyles = makeStyles((theme) => ({
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_CLIENT_ID,
 });
-
-
-// function HideOnScroll(props) {
-//   const { children, window } = props;
-//   // Note that you normally won't need to set the window ref as useScrollTrigger
-//   // will default to window.
-//   // This is only being set here because the demo is in an iframe.
-//   const trigger = useScrollTrigger({
-//     target: window ? window() : undefined,
-//   });
-
-//   return (
-//     <Slide appear={false} direction="up" in={!trigger}>
-//       {children}
-//     </Slide>
-//   );
-// }
 
 const Dashboard = ({ props, code }) => {
 
@@ -160,11 +122,8 @@ const Dashboard = ({ props, code }) => {
     clicked: false
   });
 
- 
-
   const accessToken = useAuth(code);
   spotifyApi.setAccessToken(accessToken);
-
 
   useEffect(() => {
     
@@ -214,16 +173,13 @@ const Dashboard = ({ props, code }) => {
           }
           testPosition = state.position
           
-          
           if (testSong !== state.track_window.current_track.name) {
             // console.log('song changed')
             if (songChange) {
               setSongChange(false)
             }
-            else { 
-              setSongChange(true)
-            }
-
+            setSongChange(true)
+          
             let allArtists = " ";
             state.track_window.current_track.artists.map(
               (x) => (allArtists += ` ${x.name}, `)
@@ -250,7 +206,7 @@ const Dashboard = ({ props, code }) => {
             };
             getLyrics(options).then((lyrics) => {
               if (lyrics === null) setLyrics('')
-              else setLyrics(lyrics)
+              setLyrics(lyrics)
             });
           }
           testSong = state.track_window.current_track.name;
@@ -295,12 +251,10 @@ const Dashboard = ({ props, code }) => {
           if (success) {
             console.log('The Web Playback SDK successfully connected to Spotify!');
           }
-          else {
-            console.log('The Web Playback SDK did not connect')
-          }
+          console.log('The Web Playback SDK did not connect')
+          
         })
         
-  
       };
     }
     if (accessToken === undefined) {
@@ -309,6 +263,7 @@ const Dashboard = ({ props, code }) => {
     else {
       spotifyPlayback();
     }
+    
     
      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken]);
@@ -413,7 +368,6 @@ const Dashboard = ({ props, code }) => {
   }, [repeatSong]);
 
   // delay to display loading for a few seconds
-  
 
   // when paused changes (play button is clicked)
   useEffect(() => {
@@ -423,7 +377,6 @@ const Dashboard = ({ props, code }) => {
         spotifyApi.pause().then(
           function () {
             //console.log('Playback paused');
-
           },
           function (err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -436,8 +389,6 @@ const Dashboard = ({ props, code }) => {
         .then(
           function () {
             //console.log('Playback started');
-            
-
           },
           function (err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -495,7 +446,7 @@ const Dashboard = ({ props, code }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skipSong]);
 
-  // use effect runs when currentTrack changes (song is clicked)
+  // runs when currentTrack changes (song is clicked)
   useEffect(() => {
     async function playTrack() {
       if (!accessToken || !currentTrack) return;
@@ -523,7 +474,7 @@ const Dashboard = ({ props, code }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [songClickedCounter]);
 
-  // use effect runs when accessToken or currentPlaylist changes (playlist is clicked)
+  // runs when accessToken or currentPlaylist changes (playlist is clicked)
   useEffect(() => {
     if (!accessToken) return;
 
@@ -695,16 +646,11 @@ const Dashboard = ({ props, code }) => {
                 gradient={false}
                 speed={40}
                 >
-                    <TrackInfo nowPlaying={nowPlaying} />
+                  <TrackName nowPlaying={nowPlaying} />
                 </Marquee>
 
                 <div style={{ paddingBottom: "1em" }}>
                   <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying} lyrics={lyrics} songChange={songChange}/>
-
-                  
-                  {/* <div className={classes.alignItemsAndJustifyContent}>
-                    <Lyrics lyrics={lyrics}/>
-                  </div> */}
                 </div>
             </div>}
             
@@ -742,9 +688,9 @@ const Dashboard = ({ props, code }) => {
                      currentPlaylistName={currentPlaylistName} clickPlaylistPlayButton={clickPlaylistPlayButton} />
                 </div>
 
-                {/* <Marquee style={{"width": "40%", "margin": "auto"}}gradient={false} speed={40}> */}
-                <PlaylistName currentPlaylistName={currentPlaylistName} />
-                {/* </Marquee> */}
+                <Marquee style={{"width": "40%", "margin": "auto"}}gradient={false} speed={40}>
+                  <PlaylistName currentPlaylistName={currentPlaylistName} />
+                </Marquee>
 
                 <div className={classes.alignItemsAndJustifyContent}>
                     <MyTracks

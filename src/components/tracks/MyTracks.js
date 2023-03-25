@@ -4,9 +4,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ListSubheader from '@mui/material/ListSubheader';
-// import ImageListItemBar from '@mui/material/ImageListItemBar';
-// import IconButton from '@mui/material/IconButton';
-// import Pulse from 'react-reveal/Pulse';
 import Track from './Track'
 
 
@@ -21,10 +18,6 @@ export default function MyTracks(props) {
             setLoading(true);
             return () => clearTimeout(timeoutID);
     }, [props.spinner]);
-
-    // function handleMouseHover() {
-    //     setHover(!hover);
-    // }
 
 
     return (
@@ -44,7 +37,7 @@ export default function MyTracks(props) {
                         <ListSubheader component="div">{props.tracks.length} Songs</ListSubheader>
                     </ImageListItem>
                     {props.tracks.map((track, idx) => (
-                        <Track track={track} idx={idx} clickSong={props.clickSong} /> 
+                        <Track track={track} key={idx} clickSong={props.clickSong} />
                     ))}
                 </ImageList>
                

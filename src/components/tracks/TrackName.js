@@ -21,7 +21,7 @@ import React from 'react'
 //       }
 //   }))
 
-export default function TrackInfo(props) {
+export default function TrackName(props) {
 
     // const classes = useStyles()
 
