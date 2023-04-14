@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
+import ChatRoom from "../components/chat/ChatRoom";
 import MyBubbles from "../components/background/MyBubbles";
 import AccountMenu from "../components/settings/AccountMenu";
 import MyPlaylists from "../components/playlists/MyPlaylists";
@@ -76,7 +77,7 @@ const spotifyApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_CLIENT_ID,
 });
 
-const Dashboard = ({ props, code }) => {
+const Dashboard = ({ code, db }) => {
 
   const classes = useStyles();
 
@@ -93,9 +94,10 @@ const Dashboard = ({ props, code }) => {
   const [playlists, setPlaylists] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState("");
-  const [currentTrackPosition, setCurrentTrackPosition] = useState();
+  const [currentTrackURI, setCurrentTrackURI] = useState("");
+  const [currentTrackPosition, setCurrentTrackPosition] = useState(0);
   const [currentPlaylist, setCurrentPlaylist] = useState("");
-  const [currentPlaylistURI, setCurrentPlaylistURI] = useState("")
+  const [currentPlaylistURI, setCurrentPlaylistURI] = useState("");
   const [currentPlaylistName, setCurrentPlaylistName] = useState("");
   const [nowPlaying, setNowPlaying] = useState({});
   const [skipSong, setSkipSong] = useState({});
@@ -133,7 +135,7 @@ const Dashboard = ({ props, code }) => {
       let testRepeat = ''
       let testShuffle = ''
       
-      if(scriptLoading){
+      if (scriptLoading) {
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
         script.async = true;
@@ -554,15 +556,8 @@ const Dashboard = ({ props, code }) => {
       setSongClickedCounter(songClickedCounter + 1)
       setCurrentTrackPosition(song.position);
       setCurrentTrack(song.name);
-      // setCurrentTrack(event.target.getAttribute("longdesc"));
-      // setNowPlaying({
-      //   name: song.name,
-      //   artist: song.artist,
-      //   image: song.image,
-      //   imageLow: song.imageLow,
-      //   imageHigh: song.imageHigh,
-      //   position: song.position
-      // });
+      setCurrentTrackURI(song.link);
+      console.log(song.link)
     }
   }
   function clickPlaylist(e, uri) {
@@ -607,9 +602,8 @@ const Dashboard = ({ props, code }) => {
                 display: !loading && nowPlaying.image ? "block" : "none",
                 // display: !loading && activeDevice && nowPlaying.image ? "block" : "none",
             }}
-            ref={backgroundColor}  
+            ref={backgroundColor}
             className={classes.body}>
-            
             {nowPlaying.image && <div>
                 <div
                   style={{ height: "100%"}}
@@ -683,6 +677,13 @@ const Dashboard = ({ props, code }) => {
                     particlesOn={particlesOn} setParticlesOn={setParticlesOn}
                   />
                 </div>
+                <ChatRoom db={db} userInfo={userInfo} sliderPosition={sliderPosition}
+                  currentTrack={currentTrack} currentTrackURI={currentTrackURI} />
+                <Marquee style={{"width": "50%", "margin": "auto"}}gradient={false} speed={40}>
+                  <div style={{"padding": '2em', "color":"white","fontSize": "3em"}}>
+                    My Playlists
+                  </div>
+                </Marquee>
                 <div className={classes.alignItemsAndJustifyContent}>
                     <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist}
                      currentPlaylistName={currentPlaylistName} clickPlaylistPlayButton={clickPlaylistPlayButton} />

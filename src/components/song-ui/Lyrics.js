@@ -43,8 +43,7 @@ export default function Lyrics(props) {
 
   return (
     <div>
-        <Button  sx={{fontSize:'0.7em', color: 'white'}}onClick={handleClickOpen('body')}>Lyrics</Button>
-      {/* <Button onClick={handleClickOpen('paper')}>Body</Button> */}
+      <Button  sx={{fontSize:'0.7em', color: 'white'}}onClick={handleClickOpen('body')}>Lyrics</Button>
       <Dialog
         transitionDuration={300}
         open={open}

@@ -7,7 +7,6 @@ import Flip from 'react-reveal/Flip';
 
 export default function Track(props) {
     const [hover, setHover] = useState(false);
-
     function handleMouseHover() {
         setHover(!hover);
     }
@@ -25,7 +24,8 @@ export default function Track(props) {
                         image: props.track.image,
                         imageHigh: props.track.imageHigh,
                         imageLow: props.track.imageLow,
-                        position: props.track.position
+                        position: props.track.position,
+                        link: props.track.link
                     });
                 }} 
                 key = {props.track.id + '000' + props.idx}>
