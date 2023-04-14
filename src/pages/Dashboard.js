@@ -128,7 +128,7 @@ const Dashboard = ({ code, db }) => {
   spotifyApi.setAccessToken(accessToken);
 
   useEffect(() => {
-    
+    spotifyPlayback();
     function spotifyPlayback() {
       let testSong = ''
       let testPosition = 0;
