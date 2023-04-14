@@ -253,8 +253,9 @@ const Dashboard = ({ code, db }) => {
           if (success) {
             console.log('The Web Playback SDK successfully connected to Spotify!');
           }
-          console.log('The Web Playback SDK did not connect')
-          
+          else{
+            console.log('The Web Playback SDK did not connect')
+          }
         })
         
       };

@@ -59,14 +59,13 @@ export default function ChatRoom(props) {
         }
         async function updateMessage() {
             try {
-                console.log(props.sliderPosition)
                 const docRef = doc(props.db, "messages", "SUVsFfpAP2Vz4gi0UyJG");
                 updateDoc(docRef, {
                     text: `Now Playing ${props.currentTrack} on Spotify`,
                     time: props.sliderPosition
                 })
                 .then(docRef => {
-                    console.log(`Now playing is updated`);
+                    // console.log(`Now playing is updated`);
                 })
                 .catch(error => {
                     console.log(error);
