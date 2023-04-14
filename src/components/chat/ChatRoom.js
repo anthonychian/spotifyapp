@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import ChatMessage from './ChatMessage';
 
-import { collection, query, getDocs, doc, updateDoc, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, query, getDocs, doc, updateDoc } from "firebase/firestore";
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -27,10 +27,10 @@ export default function ChatRoom(props) {
     const descriptionElementRef = React.useRef(null);
     React.useEffect(() => {
         if (open) {
-        const { current: descriptionElement } = descriptionElementRef;
-        if (descriptionElement !== null) {
-            descriptionElement.focus();
-        }
+            const { current: descriptionElement } = descriptionElementRef;
+            if (descriptionElement !== null) {
+                descriptionElement.focus();
+            }
         }
     }, [open]);
 
@@ -62,10 +62,11 @@ export default function ChatRoom(props) {
                 const docRef = doc(props.db, "messages", "SUVsFfpAP2Vz4gi0UyJG");
                 updateDoc(docRef, {
                     text: `Now Playing ${props.currentTrack} on Spotify`,
-                    time: props.sliderPosition
+                    time: props.sliderPosition,
+                    URI: props.currentTrackURI
                 })
                 .then(docRef => {
-                    // console.log(`Now playing is updated`);
+                    props.setDBTrackURI(props.currentTrackURI)
                 })
                 .catch(error => {
                     console.log(error);
@@ -77,7 +78,7 @@ export default function ChatRoom(props) {
             }
         }
         
-    },[props.db, props.currentTrack, props.currentTrackPosition, props.sliderPosition])
+    },[props.db, props.currentTrack, props.sliderPosition, props.currentTrackURI])
 
     
 

@@ -95,6 +95,7 @@ const Dashboard = ({ code, db }) => {
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState("");
   const [currentTrackURI, setCurrentTrackURI] = useState("");
+  const [DBTrackURI, setDBTrackURI] = useState("");
   const [currentTrackPosition, setCurrentTrackPosition] = useState(0);
   const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [currentPlaylistURI, setCurrentPlaylistURI] = useState("");
@@ -236,7 +237,7 @@ const Dashboard = ({ code, db }) => {
           
           spotifyApi.transferMyPlayback([device_id])
           .then(function() {
-            //console.log('Transfering playback to ' + device_id);
+            console.log('Transfering playback to ' + device_id);
           }, function(err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
             console.log('Something went wrong!', err);
@@ -457,6 +458,8 @@ const Dashboard = ({ code, db }) => {
       // spotifyApi.setAccessToken(accessToken);
 
       // Start/Resume a User's Playback
+      console.log(currentTrackURI)
+      console.log(DBTrackURI)
       spotifyApi.play({
         "context_uri": currentPlaylistURI,
         "offset": { "position": currentTrackPosition }
