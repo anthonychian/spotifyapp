@@ -558,7 +558,6 @@ const Dashboard = ({ code, db }) => {
       setCurrentTrackPosition(song.position);
       setCurrentTrack(song.name);
       setCurrentTrackURI(song.link);
-      console.log(song.link)
     }
   }
   function clickPlaylist(e, uri) {
