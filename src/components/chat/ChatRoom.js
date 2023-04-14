@@ -36,7 +36,7 @@ export default function ChatRoom(props) {
 
 
     const [messages, setMessages] = useState([]);
-    const [formValue, setFormValue] = useState('');
+    // const [formValue, setFormValue] = useState('');
     
     const { name, profile_pic } = props.userInfo
 
@@ -77,23 +77,23 @@ export default function ChatRoom(props) {
             }
         }
         
-    },[props.db, props.currentTrack, props.currentTrackPosition])
+    },[props.db, props.currentTrack, props.currentTrackPosition, props.sliderPosition])
 
     
 
-    const sendMessage = async(e) => {
-        e.preventDefault();
-        try {
-            const docRef = await addDoc(collection(props.db, "messages"), {
-                text: formValue,
-                name: name,
-                photoURL: profile_pic,
-                createdAt: serverTimestamp()
-              });
-          } catch(err) {
-            console.error("writeToDB failed. reason :", err)
-          }
-    }
+    // const sendMessage = async(e) => {
+    //     e.preventDefault();
+    //     try {
+    //         const docRef = await addDoc(collection(props.db, "messages"), {
+    //             text: formValue,
+    //             name: name,
+    //             photoURL: profile_pic,
+    //             createdAt: serverTimestamp()
+    //           });
+    //       } catch(err) {
+    //         console.error("writeToDB failed. reason :", err)
+    //       }
+    // }
     // const docRef = addDoc(collection(props.db, "messages"), {
     //     text: `Now Playing ${props.currentTrack} on Spotify`,
     //     name: name,
