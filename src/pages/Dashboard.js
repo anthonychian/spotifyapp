@@ -95,7 +95,7 @@ const Dashboard = ({ code, db }) => {
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState("");
   const [currentTrackURI, setCurrentTrackURI] = useState("");
-  const [DBTrackURI, setDBTrackURI] = useState("");
+  //const [DBTrackURI, setDBTrackURI] = useState("");
   const [currentTrackPosition, setCurrentTrackPosition] = useState(0);
   const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [currentPlaylistURI, setCurrentPlaylistURI] = useState("");
@@ -159,7 +159,7 @@ const Dashboard = ({ code, db }) => {
       
         // Playback status updates
         player.addListener('player_state_changed', state => { 
-          
+          if (state) {
           if (testPosition !== state.position) {
             setSliderPosition(state.position / 1000)
             setCurrentPosition({
@@ -197,9 +197,10 @@ const Dashboard = ({ code, db }) => {
               imageLow: state.track_window.current_track.album.images[1].url,
               position: state.position,
             });
-            
-            console.log(`getting lyrics for ${state.track_window.current_track.name} 
-              by ${state.track_window.current_track.artists[0].name}`)
+            // console.log(state.track_window.current_track.uri)
+            setCurrentTrackURI(state.track_window.current_track.uri)
+            // console.log(`getting lyrics for ${state.track_window.current_track.name} 
+            //   by ${state.track_window.current_track.artists[0].name}`)
             const options = {
               apiKey: process.env.REACT_APP_GENIUS_KEY,
               title: state.track_window.current_track.name,
@@ -228,16 +229,17 @@ const Dashboard = ({ code, db }) => {
             })
           }
           testShuffle = state.shuffle
+        }
 
         });
       
         // Ready
         player.addListener('ready', ({ device_id }) => {
-          console.log('Ready with Device ID', device_id);
+          // console.log('Ready with Device ID', device_id);
           
           spotifyApi.transferMyPlayback([device_id])
           .then(function() {
-            console.log('Transfering playback to ' + device_id);
+            // console.log('Transfering playback to ' + device_id);
           }, function(err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
             console.log('Something went wrong!', err);
@@ -251,7 +253,7 @@ const Dashboard = ({ code, db }) => {
       
         player.connect().then(success => {
           if (success) {
-            console.log('The Web Playback SDK successfully connected to Spotify!');
+            // console.log('The Web Playback SDK successfully connected to Spotify!');
           }
           else{
             console.log('The Web Playback SDK did not connect')
@@ -388,6 +390,7 @@ const Dashboard = ({ code, db }) => {
         );
       } else {
         // Start/Resume a User's Playback
+        // console.log('inside changePlayState')
         spotifyApi.play()
         .then(
           function () {
@@ -458,8 +461,7 @@ const Dashboard = ({ code, db }) => {
       // spotifyApi.setAccessToken(accessToken);
 
       // Start/Resume a User's Playback
-      console.log(currentTrackURI)
-      console.log(DBTrackURI)
+      // console.log('inside playTrack')
       spotifyApi.play({
         "context_uri": currentPlaylistURI,
         "offset": { "position": currentTrackPosition }
@@ -580,6 +582,7 @@ const Dashboard = ({ code, db }) => {
     
     // setCurrentPlaylistURI(uri);
     // clickScrollUp()
+    // console.log('inside clickPlaylistPlayButton')
     spotifyApi.play({
       "context_uri": uri
     }).then(
@@ -591,6 +594,27 @@ const Dashboard = ({ code, db }) => {
         console.log("Something went wrong!", err);
       }
     );
+  }
+
+  function playDBTrack(uri) {
+    // Start/Resume a User's Playback
+    // console.log('in playDBTrack')
+    if ((uri !== currentTrackURI) && currentTrackURI !== "") {
+      spotifyApi.play({
+        "uris": [uri],
+      }).then(
+        function () {
+          //console.log('Playback started');
+        },
+        function (err) {
+          //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+          console.log("Something went wrong!", err);
+        }
+      );
+    }
+    else {
+      // console.log('already playing the same song')
+    }
   }
   
   function changeColor(color) {
@@ -679,8 +703,9 @@ const Dashboard = ({ code, db }) => {
                     particlesOn={particlesOn} setParticlesOn={setParticlesOn}
                   />
                 </div>
-                <ChatRoom db={db} userInfo={userInfo} sliderPosition={sliderPosition}
-                  currentTrack={currentTrack} currentTrackURI={currentTrackURI} />
+                {/* setDBTrackURI={setDBTrackURI} */}
+                <ChatRoom db={db} userInfo={userInfo} playDBTrack={playDBTrack} 
+                  sliderPosition={sliderPosition} currentTrack={currentTrack} currentTrackURI={currentTrackURI} />
                 <Marquee style={{"width": "50%", "margin": "auto"}}gradient={false} speed={40}>
                   <div style={{"padding": '2em', "color":"white","fontSize": "3em"}}>
                     My Playlists

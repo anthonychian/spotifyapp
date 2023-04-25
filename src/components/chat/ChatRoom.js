@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import ChatMessage from './ChatMessage';
 
-import { collection, query, getDocs, doc, updateDoc } from "firebase/firestore";
+import { onSnapshot, collection, query, getDocs, doc, updateDoc } from "firebase/firestore";
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -10,10 +10,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function ChatRoom(props) {
+export default function ChatRoom({db, userInfo, playDBTrack,
+    sliderPosition, currentTrack, currentTrackURI}) {
 
-    const [open, setOpen] = React.useState(false);
-    const [scroll, setScroll] = React.useState('paper');
+    const [open, setOpen] = useState(false);
+    const [scroll, setScroll] = useState('paper');
   
     const handleClickOpen = (scrollType) => () => {
       setOpen(true);
@@ -24,8 +25,8 @@ export default function ChatRoom(props) {
       setOpen(false);
     };
 
-    const descriptionElementRef = React.useRef(null);
-    React.useEffect(() => {
+    const descriptionElementRef = useRef(null);
+    useEffect(() => {
         if (open) {
             const { current: descriptionElement } = descriptionElementRef;
             if (descriptionElement !== null) {
@@ -36,20 +37,30 @@ export default function ChatRoom(props) {
 
 
     const [messages, setMessages] = useState([]);
-    // const [formValue, setFormValue] = useState('');
     
-    const { name, profile_pic } = props.userInfo
+    
+    const { name, profile_pic } = userInfo
 
-    
+    // const unsub = onSnapshot(doc(props.db, "messages", "SUVsFfpAP2Vz4gi0UyJG"), (doc) => {
+    //     console.log("current: ", doc.data().text);
+    // });
+
+    useEffect(() => { 
+        const unsubscribe = onSnapshot(doc(db, "messages", "SUVsFfpAP2Vz4gi0UyJG"), (doc) => {
+            playDBTrack(doc.data().URI)
+        });
+        //remember to unsubscribe from your realtime listener on unmount or you will create a memory leak
+        return () => unsubscribe()
+    }, [db, playDBTrack]);
 
     useEffect(() => {
-        if (props.currentTrack !== '') {
+        if (currentTrack !== '') {
             getMessages();
             updateMessage();
         }
 
         async function getMessages() {
-            const q = query(collection(props.db, "messages"));
+            const q = query(collection(db, "messages"));
             const querySnapshot = await getDocs(q);
             let messages = []
             querySnapshot.forEach((doc) => {
@@ -59,14 +70,14 @@ export default function ChatRoom(props) {
         }
         async function updateMessage() {
             try {
-                const docRef = doc(props.db, "messages", "SUVsFfpAP2Vz4gi0UyJG");
+                const docRef = doc(db, "messages", "SUVsFfpAP2Vz4gi0UyJG");
                 updateDoc(docRef, {
-                    text: `Now Playing ${props.currentTrack} on Spotify`,
-                    time: props.sliderPosition,
-                    URI: props.currentTrackURI
+                    text: currentTrack,
+                    time: sliderPosition,
+                    URI: currentTrackURI,
                 })
                 .then(docRef => {
-                    props.setDBTrackURI(props.currentTrackURI)
+                    // props.setDBTrackURI(props.currentTrackURI)
                 })
                 .catch(error => {
                     console.log(error);
@@ -78,10 +89,10 @@ export default function ChatRoom(props) {
             }
         }
         
-    },[props.db, props.currentTrack, props.sliderPosition, props.currentTrackURI])
+    },[db, currentTrack, currentTrackURI, sliderPosition])
 
     
-
+    // const [formValue, setFormValue] = useState('');
     // const sendMessage = async(e) => {
     //     e.preventDefault();
     //     try {
