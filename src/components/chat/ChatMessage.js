@@ -13,8 +13,10 @@ const commonStyles = {
 };
 
 
-export default function ChatMessage({message, name, photoURL}) {
+export default function ChatMessage({message}) {
     const text = message.text
+    const name = message.name
+    const photoURL = message.photoURL
 
     return (
         <div>

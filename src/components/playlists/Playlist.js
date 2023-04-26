@@ -54,8 +54,8 @@ export default function Playlist(props) {
             <div className={classes.imgContainer}>
                 <img
                     className={classes.img}
-                    src={`${props.playlist.images[0].url}?w=164&h=164&fit=crop&auto=format`}
-                    srcSet={`${props.playlist.images[0].url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                    src={`${props.playlist.images[0]?.url}?w=164&h=164&fit=crop&auto=format`}
+                    srcSet={`${props.playlist.images[0]?.url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                     alt={props.playlist.name}
                     loading="lazy"
                     longdesc={props.playlist.id}

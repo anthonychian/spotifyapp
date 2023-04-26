@@ -599,7 +599,7 @@ const Dashboard = ({ code, db }) => {
   function playDBTrack(uri) {
     // Start/Resume a User's Playback
     // console.log('in playDBTrack')
-    if ((uri !== currentTrackURI) && currentTrackURI !== "") {
+    if (true) {
       spotifyApi.play({
         "uris": [uri],
       }).then(

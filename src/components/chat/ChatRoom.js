@@ -15,6 +15,7 @@ export default function ChatRoom({db, userInfo, playDBTrack,
 
     const [open, setOpen] = useState(false);
     const [scroll, setScroll] = useState('paper');
+    const [dbName, setdbName] = useState('');
   
     const handleClickOpen = (scrollType) => () => {
       setOpen(true);
@@ -37,8 +38,6 @@ export default function ChatRoom({db, userInfo, playDBTrack,
 
 
     const [messages, setMessages] = useState([]);
-    
-    
     const { name, profile_pic } = userInfo
 
     // const unsub = onSnapshot(doc(props.db, "messages", "SUVsFfpAP2Vz4gi0UyJG"), (doc) => {
@@ -51,7 +50,7 @@ export default function ChatRoom({db, userInfo, playDBTrack,
         });
         //remember to unsubscribe from your realtime listener on unmount or you will create a memory leak
         return () => unsubscribe()
-    }, [db, playDBTrack]);
+    }, []);
 
     useEffect(() => {
         if (currentTrack !== '') {
@@ -67,21 +66,28 @@ export default function ChatRoom({db, userInfo, playDBTrack,
                 messages.push(doc.data())
             });
             setMessages(messages)
+            setdbName(messages[0].name)
         }
         async function updateMessage() {
+            console.log('dbName: ' + dbName)
+            console.log('name: ' + name)
             try {
+                if (dbName !== name) {
                 const docRef = doc(db, "messages", "SUVsFfpAP2Vz4gi0UyJG");
                 updateDoc(docRef, {
+                    name,
+                    photoURL: profile_pic,
                     text: currentTrack,
                     time: sliderPosition,
                     URI: currentTrackURI,
                 })
                 .then(docRef => {
-                    // props.setDBTrackURI(props.currentTrackURI)
+
                 })
                 .catch(error => {
                     console.log(error);
                 })
+            }
         
             }
             catch(err) {
@@ -89,7 +95,7 @@ export default function ChatRoom({db, userInfo, playDBTrack,
             }
         }
         
-    },[db, currentTrack, currentTrackURI, sliderPosition])
+    },[currentTrackURI])
 
     
     // const [formValue, setFormValue] = useState('');
@@ -141,8 +147,7 @@ export default function ChatRoom({db, userInfo, playDBTrack,
                 >
                     <div>
                         {messages && messages.map((message, idx) => (
-                            <ChatMessage sx={{}} key={idx} message={message} 
-                                name={name} photoURL={profile_pic} />
+                            <ChatMessage sx={{}} key={idx} message={message} />
                         ))}
                     </div>
                     
