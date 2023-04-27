@@ -153,7 +153,7 @@ const Dashboard = ({ code }) => {
           getOAuthToken: callback => {
             callback(accessToken);
           },
-          volume: 0.5
+          volume: 0.2
         });
         // Error handling
         player.addListener('initialization_error', ({ message }) => { console.error(message); });

@@ -8,7 +8,7 @@ const commonStyles = {
     borderColor: 'text.primary',
     m: 1,
     border: 3,
-    width: 'auto',
+    width: '30%',
     height: 'auto',
     padding: '1em',
     textAlign: 'center'
@@ -29,9 +29,11 @@ export default function ChatMessage({ message }) {
                 <Typography sx={{ width: 'auto', fontWeight: "bold", fontSize: "0.9em", color: "gray" }}>{name}</Typography>
 
             </div>
-            <Box sx={{ ...commonStyles, borderRadius: '16px' }} >
-                <Typography sx={{ fontSize: "1em" }}>{text}</Typography>
-            </Box>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Box sx={{ ...commonStyles, borderRadius: '16px' }} >
+                    <Typography sx={{ fontSize: "1em" }}>{text}</Typography>
+                </Box>
+            </div>
         </div>
     )
 }

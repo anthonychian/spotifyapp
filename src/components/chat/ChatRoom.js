@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import ChatMessage from './ChatMessage';
 import { db } from '../../firebase';
-import { onSnapshot, collection, query, getDocs, doc, updateDoc } from "firebase/firestore";
-
+import {
+    onSnapshot, collection, query, getDocs, doc, updateDoc, arrayUnion,
+    arrayRemove, addDoc, serverTimestamp, orderBy, limit
+} from "firebase/firestore";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -17,7 +19,19 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import GroupsIcon from '@mui/icons-material/Groups';
-import redAmogus from '../../assets/red amogus.gif'
+
+import redAmogus from '../../assets/red amogus.gif';
+import blueAmogus from '../../assets/blue amogus.gif';
+import greenAmogus from '../../assets/green amogus.gif';
+import orangeAmogus from '../../assets/orange amogus.gif';
+import yellowAmogus from '../../assets/yellow amogus.gif';
+import cyanAmogus from '../../assets/cyan amogus.gif';
+import limeAmogus from '../../assets/lime amogus.gif';
+import purpleAmogus from '../../assets/purple amogus.gif';
+import pinkAmogus from '../../assets/pink amogus.gif';
+import brownAmogus from '../../assets/brown amogus.gif';
+import blackAmogus from '../../assets/black amogus.gif';
+import susAmogus from '../../assets/red amogus2.gif';
 
 export default function ChatRoom({ userInfo, playDBTrack,
     sliderPosition, currentTrack, currentTrackURI }) {
@@ -26,6 +40,10 @@ export default function ChatRoom({ userInfo, playDBTrack,
     const [scroll, setScroll] = useState('paper');
     const [playFromDB, setPlayFromDB] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [messages, setMessages] = useState([]);
+    const [chatMessages, setChatMessages] = useState([]);
+    const [groupSessionNames, setGroupSessionNames] = useState([]);
+    const { name, profile_pic } = userInfo;
 
     const handleModalOpen = (scrollType) => () => {
         setOpen(true);
@@ -37,7 +55,6 @@ export default function ChatRoom({ userInfo, playDBTrack,
     };
 
     const handleDrawerOpen = () => {
-        console.log('open')
         setDrawerOpen(true);
     };
 
@@ -55,35 +72,100 @@ export default function ChatRoom({ userInfo, playDBTrack,
         }
     }, [open]);
 
-
-    const [messages, setMessages] = useState([]);
-    const { name, profile_pic } = userInfo
+    useEffect(() => {
+        updateGroupSession('add');
+        getGroupSession();
+    }, []);
 
 
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(db, "messages", "SUVsFfpAP2Vz4gi0UyJG"), (doc) => {
-            // console.log('set to true')
-            // console.log('playing from db')
             setPlayFromDB(true)
             playDBTrack(doc.data().URI)
-            // set play from db = true
         });
         //remember to unsubscribe from your realtime listener on unmount or you will create a memory leak
         return () => unsubscribe()
+
+    }, []);
+    useEffect(() => {
+        const q = query(collection(db, "chat"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            getChatMessages()
+        });
+        //remember to unsubscribe from your realtime listener on unmount or you will create a memory leak
+        return () => unsubscribe()
+
+    }, []);
+    useEffect(() => {
+        const q = query(collection(db, "people"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            getGroupSession()
+        });
+        //remember to unsubscribe from your realtime listener on unmount or you will create a memory leak
+        return () => {
+            updateGroupSession('remove')
+            unsubscribe()
+        }
+
     }, []);
 
-    // # 1 
-    // initial false
-    // play song -> update message -> set to false
-    // set to true, play from db
-    // false from update overwrites true from earlier
 
+    useEffect(() => {
+        getChatMessages();
+    }, [])
+    async function getChatMessages() {
+        const q = query(collection(db, "chat"), orderBy("createdAt", "desc"), limit(10));
+        const querySnapshot = await getDocs(q);
+        let messages = []
+        querySnapshot.forEach((doc) => {
+            messages.push(doc.data())
+        });
+        setChatMessages(messages)
+    }
+    async function getGroupSession() {
+        const q = query(collection(db, "people"));
+        const querySnapshot = await getDocs(q);
+        let names = []
+        querySnapshot.forEach((doc) => {
+            names.push(doc.data())
+        });
+        setGroupSessionNames(names[0].people)
+    }
+    async function updateGroupSession(choice) {
+        // play from db must be false
+        // console.log('trying to update message')
 
-    // # 2
-    // initial false
-    // listen from db -> set to true, play db track
-    // cannot update message
-    // set to false
+        try {
+            if (choice === 'add') {
+                const docRef = doc(db, "people", "lY4KY2dHXpTFEqsq3qFD");
+                updateDoc(docRef, {
+                    people: arrayUnion(name)
+                })
+                    .then(docRef => {
+                        // console.log('updated group session')
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            }
+            else {
+                const docRef = doc(db, "people", "lY4KY2dHXpTFEqsq3qFD");
+                updateDoc(docRef, {
+                    people: arrayRemove(name)
+                })
+                    .then(docRef => {
+                        console.log('updated group session')
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            }
+
+        }
+        catch (err) {
+            console.error("Failed to update", err)
+        }
+    }
 
     useEffect(() => {
 
@@ -130,26 +212,82 @@ export default function ChatRoom({ userInfo, playDBTrack,
     }, [currentTrackURI])
 
 
-    // const [formValue, setFormValue] = useState('');
-    // const sendMessage = async(e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const docRef = await addDoc(collection(props.db, "messages"), {
-    //             text: formValue,
-    //             name: name,
-    //             photoURL: profile_pic,
-    //             createdAt: serverTimestamp()
-    //           });
-    //       } catch(err) {
-    //         console.error("writeToDB failed. reason :", err)
-    //       }
-    // }
-    // const docRef = addDoc(collection(props.db, "messages"), {
-    //     text: `Now Playing ${props.currentTrack} on Spotify`,
-    //     name: name,
-    //     photoURL: profile_pic,
-    //     createdAt: serverTimestamp()
-    // });
+    const [formValue, setFormValue] = useState('');
+    const sendChatMessage = async (e) => {
+        e.preventDefault();
+        try {
+            const docRef = await addDoc(collection(db, "chat"), {
+                text: formValue,
+                name: name,
+                photoURL: profile_pic,
+                createdAt: serverTimestamp()
+            })
+                .then(docRef => {
+                    setFormValue("");
+                    getChatMessages();
+                })
+        } catch (err) {
+            console.error("writeToDB failed. reason :", err)
+        }
+    }
+
+    function randomizeIcons(num) {
+        // const number = Math.floor(Math.random() * 12);
+        let icon;
+        switch (num) {
+            case 0:
+                icon = redAmogus;
+                break;
+            case 1:
+                icon = blueAmogus;
+                break;
+            case 2:
+                icon = cyanAmogus;
+                break;
+            case 3:
+                icon = limeAmogus;
+                break;
+            case 4:
+                icon = yellowAmogus;
+                break;
+            case 5:
+                icon = orangeAmogus;
+                break;
+            case 6:
+                icon = purpleAmogus;
+                break;
+            case 7:
+                icon = pinkAmogus;
+                break;
+            case 8:
+                icon = greenAmogus;
+                break;
+            case 9:
+                icon = blackAmogus;
+                break;
+            case 10:
+                icon = brownAmogus;
+                break;
+            case 11:
+                icon = susAmogus;
+                break;
+        }
+        return icon;
+    }
+    // # 1 
+    // initial false
+    // play song -> update message -> set to false
+    // set to true, play from db
+    // false from update overwrites true from earlier
+
+
+    // # 2
+    // initial false
+    // listen from db -> set to true, play db track
+    // cannot update message
+    // set to false
+
+
 
     return (
 
@@ -176,17 +314,32 @@ export default function ChatRoom({ userInfo, playDBTrack,
                 <Drawer
                     anchor='bottom'
                     open={drawerOpen}
-                    onClick={handleDrawerClose}
+                    // onClick={handleDrawerClose}
                     onClose={handleDrawerClose}
-                    PaperProps={{ sx: { height: 240, backgroundColor: 'transparent' } }}
+                    PaperProps={{ sx: { height: 440, backgroundColor: 'transparent' } }}
                 >
-                    <Box sx={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Tooltip title={name}>
-                            <IconButton>
-                                <Avatar alt={redAmogus} src={redAmogus} sx={{ width: 64, height: 64 }} />
-                            </IconButton>
-                        </Tooltip>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {groupSessionNames && groupSessionNames.map((people, idx) => (
+                            <Tooltip key={idx} title={people}>
+                                <IconButton>
+                                    <Avatar alt={susAmogus} src={randomizeIcons(idx)} sx={{ width: 64, height: 64 }} />
+                                </IconButton>
+                            </Tooltip>
+                        ))}
                     </Box>
+                    <div style={{ height: '10px' }} />
+                    <Box sx={{ height: '10%', width: '100%', position: 'relative' }}>
+                        <form onSubmit={sendChatMessage} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <input value={formValue} onChange={(e) => setFormValue(e.target.value)} />
+                            <button type='submit'>submit</button>
+                        </form>
+                        <div style={{ height: '20px' }} />
+                        {chatMessages && chatMessages.map((message, idx) => (
+                            <ChatMessage sx={{}}
+                                key={idx} message={message} name={name} photoURL={profile_pic} />
+                        ))}
+                    </Box>
+
                 </Drawer>
             </div>
             <Dialog
@@ -197,7 +350,7 @@ export default function ChatRoom({ userInfo, playDBTrack,
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description"
             >
-                <DialogTitle id="scroll-dialog-title">Chat </DialogTitle>
+                <DialogTitle id="scroll-dialog-title"></DialogTitle>
                 <DialogContent dividers={scroll === 'paper'}>
                     <DialogContentText
                         id="scroll-dialog-description"
@@ -217,17 +370,6 @@ export default function ChatRoom({ userInfo, playDBTrack,
                     <Button onClick={handleModalClose}>Close</Button>
                 </DialogActions>
             </Dialog>
-            {/* <div>
-                {messages && messages.map((message, idx) => (
-                    <ChatMessage sx={{}}
-                        key={idx} message={message} name={name} photoURL={profile_pic} />
-                ))}
-            </div>
-            <form onSubmit={sendMessage}>
-                <input value={formValue} onChange={(e) => setFormValue(e.target.value)} />
-                <button type='submit'>submit</button>
-            </form> */}
-
         </div>
     )
 }
