@@ -14,6 +14,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 import Marquee from "react-fast-marquee";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import IconButton from '@mui/material/IconButton';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 import { getLyrics } from 'genius-lyrics-api';
 import useAuth from "../useAuth";
@@ -56,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   trackInfoContainer: {
     margin: "auto",
     "@media (max-width:480px)": {
-         
+
       width: "90%",
       fontSize: "0.7em",
       paddingTop: 50,
@@ -77,7 +81,7 @@ const spotifyApi = new SpotifyWebApi({
   clientId: process.env.REACT_APP_CLIENT_ID,
 });
 
-const Dashboard = ({ code, db }) => {
+const Dashboard = ({ code }) => {
 
   const classes = useStyles();
 
@@ -95,7 +99,6 @@ const Dashboard = ({ code, db }) => {
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState("");
   const [currentTrackURI, setCurrentTrackURI] = useState("");
-  //const [DBTrackURI, setDBTrackURI] = useState("");
   const [currentTrackPosition, setCurrentTrackPosition] = useState(0);
   const [currentPlaylist, setCurrentPlaylist] = useState("");
   const [currentPlaylistURI, setCurrentPlaylistURI] = useState("");
@@ -124,6 +127,7 @@ const Dashboard = ({ code, db }) => {
     repeatMode: 0,
     clicked: false
   });
+  const [switchOn, setSwitchOn] = useState(false);
 
   const accessToken = useAuth(code);
   spotifyApi.setAccessToken(accessToken);
@@ -134,7 +138,7 @@ const Dashboard = ({ code, db }) => {
       let testPosition = 0;
       let testRepeat = ''
       let testShuffle = ''
-      
+
       if (scriptLoading) {
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -156,110 +160,110 @@ const Dashboard = ({ code, db }) => {
         player.addListener('authentication_error', ({ message }) => { console.error(message); });
         player.addListener('account_error', ({ message }) => { console.error(message); });
         player.addListener('playback_error', ({ message }) => { console.error(message); });
-      
+
         // Playback status updates
-        player.addListener('player_state_changed', state => { 
+        player.addListener('player_state_changed', state => {
           if (state) {
-          if (testPosition !== state.position) {
-            setSliderPosition(state.position / 1000)
-            setCurrentPosition({
-              position: state.position,
-              total: state.duration,
-              onChange: false,
-            });
+            if (testPosition !== state.position) {
+              setSliderPosition(state.position / 1000)
+              setCurrentPosition({
+                position: state.position,
+                total: state.duration,
+                onChange: false,
+              });
 
-            setPaused({
-              paused: state.paused,
-              clicked: false,
-            });
-          }
-          testPosition = state.position
-          
-          if (testSong !== state.track_window.current_track.name) {
-            // console.log('song changed')
-            if (songChange) {
-              setSongChange(false)
+              setPaused({
+                paused: state.paused,
+                clicked: false,
+              });
             }
-            setSongChange(true)
-          
-            let allArtists = " ";
-            state.track_window.current_track.artists.map(
-              (x) => (allArtists += ` ${x.name}, `)
-            );
-            
-            allArtists = allArtists.slice(0, allArtists.length - 2);
-            setCurrentTrack(state.track_window.current_track.name)
-            setNowPlaying({
-              name: state.track_window.current_track.name,
-              artist: allArtists,
-              imageHigh: state.track_window.current_track.album.images[2].url,
-              image: state.track_window.current_track.album.images[0].url,
-              imageLow: state.track_window.current_track.album.images[1].url,
-              position: state.position,
-            });
-            // console.log(state.track_window.current_track.uri)
-            setCurrentTrackURI(state.track_window.current_track.uri)
-            // console.log(`getting lyrics for ${state.track_window.current_track.name} 
-            //   by ${state.track_window.current_track.artists[0].name}`)
-            const options = {
-              apiKey: process.env.REACT_APP_GENIUS_KEY,
-              title: state.track_window.current_track.name,
-              artist: state.track_window.current_track.artists[0].name,
-              optimizeQuery: true,
-            };
-            getLyrics(options).then((lyrics) => {
-              if (lyrics === null) setLyrics('')
-              setLyrics(lyrics)
-            });
-          }
-          testSong = state.track_window.current_track.name;
+            testPosition = state.position
 
-          if (testRepeat !== state.repeat_mode) {
-            setRepeatSong({
-              repeatMode: state.repeat_mode,
-              clicked: false
-            })
-          }
-          testRepeat = state.repeat_mode
+            if (testSong !== state.track_window.current_track.name) {
+              // console.log('song changed')
+              if (songChange) {
+                setSongChange(false)
+              }
+              setSongChange(true)
 
-          if (testShuffle !== state.shuffle) {
-            setShuffle({
-              shuffle: state.shuffle,
-              clicked: false
-            })
+              let allArtists = " ";
+              state.track_window.current_track.artists.map(
+                (x) => (allArtists += ` ${x.name}, `)
+              );
+
+              allArtists = allArtists.slice(0, allArtists.length - 2);
+              setCurrentTrack(state.track_window.current_track.name)
+              setNowPlaying({
+                name: state.track_window.current_track.name,
+                artist: allArtists,
+                imageHigh: state.track_window.current_track.album.images[2].url,
+                image: state.track_window.current_track.album.images[0].url,
+                imageLow: state.track_window.current_track.album.images[1].url,
+                position: state.position,
+              });
+              // console.log(state.track_window.current_track.uri)
+              setCurrentTrackURI(state.track_window.current_track.uri)
+              // console.log(`getting lyrics for ${state.track_window.current_track.name} 
+              //   by ${state.track_window.current_track.artists[0].name}`)
+              const options = {
+                apiKey: process.env.REACT_APP_GENIUS_KEY,
+                title: state.track_window.current_track.name,
+                artist: state.track_window.current_track.artists[0].name,
+                optimizeQuery: true,
+              };
+              getLyrics(options).then((lyrics) => {
+                if (lyrics === null) setLyrics('')
+                setLyrics(lyrics)
+              });
+            }
+            testSong = state.track_window.current_track.name;
+
+            if (testRepeat !== state.repeat_mode) {
+              setRepeatSong({
+                repeatMode: state.repeat_mode,
+                clicked: false
+              })
+            }
+            testRepeat = state.repeat_mode
+
+            if (testShuffle !== state.shuffle) {
+              setShuffle({
+                shuffle: state.shuffle,
+                clicked: false
+              })
+            }
+            testShuffle = state.shuffle
           }
-          testShuffle = state.shuffle
-        }
 
         });
-      
+
         // Ready
         player.addListener('ready', ({ device_id }) => {
           // console.log('Ready with Device ID', device_id);
-          
+
           spotifyApi.transferMyPlayback([device_id])
-          .then(function() {
-            // console.log('Transfering playback to ' + device_id);
-          }, function(err) {
-            //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-            console.log('Something went wrong!', err);
-          });
+            .then(function () {
+              // console.log('Transfering playback to ' + device_id);
+            }, function (err) {
+              //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+              console.log('Something went wrong!', err);
+            });
         });
-      
+
         // Not Ready
         player.addListener('not_ready', ({ device_id }) => {
           console.log('Device ID has gone offline', device_id);
         });
-      
+
         player.connect().then(success => {
           if (success) {
             // console.log('The Web Playback SDK successfully connected to Spotify!');
           }
-          else{
+          else {
             console.log('The Web Playback SDK did not connect')
           }
         })
-        
+
       };
     }
     if (accessToken === undefined) {
@@ -268,14 +272,14 @@ const Dashboard = ({ code, db }) => {
     else {
       spotifyPlayback();
     }
-    
-    
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken]);
 
   // delay to display loading for a few seconds
   useEffect(() => {
-  const timeoutID = setTimeout(() => {
+    const timeoutID = setTimeout(() => {
       setLoading(false);
     }, 1000);
     return () => clearTimeout(timeoutID);
@@ -392,15 +396,15 @@ const Dashboard = ({ code, db }) => {
         // Start/Resume a User's Playback
         // console.log('inside changePlayState')
         spotifyApi.play()
-        .then(
-          function () {
-            //console.log('Playback started');
-          },
-          function (err) {
-            //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-            console.log("Something went wrong!", err);
-          }
-        );
+          .then(
+            function () {
+              //console.log('Playback started');
+            },
+            function (err) {
+              //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+              console.log("Something went wrong!", err);
+            }
+          );
       }
     }
     if (paused.clicked) changePlayState();
@@ -579,7 +583,7 @@ const Dashboard = ({ code, db }) => {
     }
   }
   function clickPlaylistPlayButton(uri, name) {
-    
+
     // setCurrentPlaylistURI(uri);
     // clickScrollUp()
     // console.log('inside clickPlaylistPlayButton')
@@ -599,137 +603,150 @@ const Dashboard = ({ code, db }) => {
   function playDBTrack(uri) {
     // Start/Resume a User's Playback
     // console.log('in playDBTrack')
-    if (true) {
-      spotifyApi.play({
-        "uris": [uri],
-      }).then(
-        function () {
-          //console.log('Playback started');
-        },
-        function (err) {
-          //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
-          console.log("Something went wrong!", err);
-        }
-      );
-    }
-    else {
-      // console.log('already playing the same song')
-    }
+    spotifyApi.play({
+      "uris": [uri],
+    }).then(
+      function () {
+        //console.log('Playback started');
+      },
+      function (err) {
+        //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
+        console.log("Something went wrong!", err);
+      }
+    );
   }
-  
-  function changeColor(color) {
+
+  const changeColor = (color) => {
     backgroundColor.current.style.backgroundColor = color;
   }
 
+  const handleSwitch = () => {
+    setSwitchOn(!switchOn);
+  };
+
+
   return (
     <div>
-        <div 
-            style={{
-                display: !loading && nowPlaying.image ? "block" : "none",
-                // display: !loading && activeDevice && nowPlaying.image ? "block" : "none",
-            }}
-            ref={backgroundColor}
-            className={classes.body}>
-            {nowPlaying.image && <div>
-                <div
-                  style={{ height: "100%"}}
-                  className={classes.bubbles}
-                >
-                    <MyBubbles particlesOn={particlesOn}/>
-                </div>
+      <div
+        style={{
+          display: !loading && nowPlaying.image ? "block" : "none",
+          // display: !loading && activeDevice && nowPlaying.image ? "block" : "none",
+        }}
+        ref={backgroundColor}
+        className={classes.body}>
+        {nowPlaying.image && <div>
+          <div
+            style={{ height: "100%" }}
+            className={classes.bubbles}
+          >
+            <MyBubbles particlesOn={particlesOn} />
+          </div>
 
-                <div className={classes.avatar}>
-                    <AccountMenu name={userInfo.name} src={userInfo.profile_pic} 
-                      particlesOn={particlesOn} setParticlesOn={setParticlesOn}
-                    />
-                </div>
-                
-                <MyAppBar 
-                  nowPlaying={nowPlaying} 
-                  clickScrollUp={clickScrollUp}
-                  paused={paused}
-                  setPaused={setPaused}
-                  setSkipSong={setSkipSong}
-                  shuffle={shuffle}
-                  setShuffle={setShuffle}
-                  repeatSong={repeatSong}
-                  setRepeatSong={setRepeatSong}
-                  setCurrentPosition={setCurrentPosition}
-                  currentPosition={currentPosition}
-                  currentTrack={currentTrack}
-                  sliderPosition={sliderPosition}
-                  setSliderPosition={setSliderPosition}
-                />
+          <div className={classes.avatar}>
+            <AccountMenu name={userInfo.name} src={userInfo.profile_pic}
+              particlesOn={particlesOn} setParticlesOn={setParticlesOn}
+            />
+          </div>
 
-                <Marquee
-                className={classes.trackInfoContainer}
-                gradient={false}
-                speed={40}
-                >
-                  <TrackName nowPlaying={nowPlaying} />
-                </Marquee>
+          <MyAppBar
+            nowPlaying={nowPlaying}
+            clickScrollUp={clickScrollUp}
+            paused={paused}
+            setPaused={setPaused}
+            setSkipSong={setSkipSong}
+            shuffle={shuffle}
+            setShuffle={setShuffle}
+            repeatSong={repeatSong}
+            setRepeatSong={setRepeatSong}
+            setCurrentPosition={setCurrentPosition}
+            currentPosition={currentPosition}
+            currentTrack={currentTrack}
+            sliderPosition={sliderPosition}
+            setSliderPosition={setSliderPosition}
+          />
 
-                <div style={{ paddingBottom: "1em" }}>
-                  <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying} lyrics={lyrics} songChange={songChange}/>
-                </div>
-            </div>}
-            
+          <Marquee
+            className={classes.trackInfoContainer}
+            gradient={false}
+            speed={40}
+          >
+            <TrackName nowPlaying={nowPlaying} />
+          </Marquee>
+
+          <div style={{ paddingBottom: "1em" }}>
+            <NowPlaying changeColor={changeColor} nowPlaying={nowPlaying} lyrics={lyrics} songChange={songChange} />
+          </div>
+        </div>}
+
+      </div>
+
+      {nowPlaying &&
+        <div
+          style={{
+            display: loading ? "flex" : "none",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+            width: "100vw",
+          }}
+        >
+          <Stack sx={{ color: "white" }} spacing={2} direction="row">
+            <CircularProgress size={"5em"} />
+          </Stack>
         </div>
+      }
 
-        {nowPlaying &&
-            <div
-            style={{
-                display: loading ? "flex" : "none",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100vh",
-                width: "100vw",
-            }}
-            >
-            <Stack sx={{ color: "white" }} spacing={2} direction="row">
-                <CircularProgress size={"5em"} />
-            </Stack>
-            </div>
-        }
+      {nowPlaying &&
+        <div
+          style={{
+            display: loading ? "none" : "block",
+          }}
+        >   <div className={classes.avatar2}>
+            <div style={{ marginTop: '5em' }}></div>
+            <AccountMenu name={userInfo.name} src={userInfo.profile_pic}
+              particlesOn={particlesOn} setParticlesOn={setParticlesOn}
+            />
+          </div>
+          {!switchOn && <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '100px', height: '100px', position: 'fixed', right: '1%', top: '0%'
+          }}>
+            <IconButton disabled={true}>
+              <GroupsIcon sx={{ color: 'white' }}>Open</GroupsIcon>
+            </IconButton>
+          </div>}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
+            width: '100px', height: '100px', position: 'fixed', right: '0%', top: '7%'
+          }}>
+            <FormControlLabel control={<Switch onChange={handleSwitch} />} label="" />
+          </div>
+          {switchOn && <ChatRoom userInfo={userInfo} playDBTrack={playDBTrack}
+            sliderPosition={sliderPosition} currentTrack={currentTrack} currentTrackURI={currentTrackURI} />}
+          {/* <Marquee style={{ "width": "50%", "margin": "auto" }} gradient={false} speed={40}> */}
+          <div style={{ textAlign: 'center', padding: '2em', width: "50%", margin: "auto", color: "white", fontSize: "3em" }}>
+            My Playlists
+          </div>
+          {/* </Marquee> */}
+          <div className={classes.alignItemsAndJustifyContent}>
+            <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist}
+              currentPlaylistName={currentPlaylistName} clickPlaylistPlayButton={clickPlaylistPlayButton} />
+          </div>
 
-          {nowPlaying && 
-            <div
-            style={{
-                display: loading ? "none" : "block",
-            }}
-            >   <div className={classes.avatar2}>
-                  <div style={{marginTop: '5em'}}></div>
-                  <AccountMenu name={userInfo.name} src={userInfo.profile_pic} 
-                    particlesOn={particlesOn} setParticlesOn={setParticlesOn}
-                  />
-                </div>
-                {/* setDBTrackURI={setDBTrackURI} */}
-                <ChatRoom db={db} userInfo={userInfo} playDBTrack={playDBTrack} 
-                  sliderPosition={sliderPosition} currentTrack={currentTrack} currentTrackURI={currentTrackURI} />
-                <Marquee style={{"width": "50%", "margin": "auto"}}gradient={false} speed={40}>
-                  <div style={{"padding": '2em', "color":"white","fontSize": "3em"}}>
-                    My Playlists
-                  </div>
-                </Marquee>
-                <div className={classes.alignItemsAndJustifyContent}>
-                    <MyPlaylists playlists={playlists} clickPlaylist={clickPlaylist}
-                     currentPlaylistName={currentPlaylistName} clickPlaylistPlayButton={clickPlaylistPlayButton} />
-                </div>
+          {/* <Marquee style={{ "width": "40%", "margin": "auto" }} gradient={false} speed={40}> */}
+          <PlaylistName currentPlaylistName={currentPlaylistName} />
+          {/* </Marquee> */}
 
-                <Marquee style={{"width": "40%", "margin": "auto"}}gradient={false} speed={40}>
-                  <PlaylistName currentPlaylistName={currentPlaylistName} />
-                </Marquee>
-
-                <div className={classes.alignItemsAndJustifyContent}>
-                    <MyTracks
-                    tracks={tracks}
-                    clickSong={clickSong}
-                    spinner={spinner}
-                    // activeDevice={activeDevice}
-                    />
-                </div>
-            </div>
-          }
+          <div className={classes.alignItemsAndJustifyContent}>
+            <MyTracks
+              tracks={tracks}
+              clickSong={clickSong}
+              spinner={spinner}
+            // activeDevice={activeDevice}
+            />
+          </div>
+        </div>
+      }
 
     </div>
   );
