@@ -18,6 +18,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import IconButton from '@mui/material/IconButton';
 import GroupsIcon from '@mui/icons-material/Groups';
+import Tooltip from '@mui/material/Tooltip';
 
 import { getLyrics } from 'genius-lyrics-api';
 import useAuth from "../useAuth";
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: "0",
     backgroundColor: "#191414",
     height: "100vh",
-    width: "100vw",
+    width: "100%",
     minHeight: "900px",
     background: "linear-gradient(to bottom, rgba(0,0,0,0.8),transparent)",
   },
@@ -98,6 +99,7 @@ const Dashboard = ({ code }) => {
   const [playlists, setPlaylists] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState("");
+  const [currentArtist, setCurrentArtist] = useState("");
   const [currentTrackURI, setCurrentTrackURI] = useState("");
   const [currentTrackPosition, setCurrentTrackPosition] = useState(0);
   const [currentPlaylist, setCurrentPlaylist] = useState("");
@@ -192,7 +194,8 @@ const Dashboard = ({ code }) => {
               );
 
               allArtists = allArtists.slice(0, allArtists.length - 2);
-              setCurrentTrack(state.track_window.current_track.name)
+              setCurrentTrack(state.track_window.current_track.name);
+              setCurrentArtist(allArtists);
               setNowPlaying({
                 name: state.track_window.current_track.name,
                 artist: allArtists,
@@ -341,7 +344,7 @@ const Dashboard = ({ code }) => {
         // Toggle Repeat For User’s Playback
         spotifyApi.setRepeat("off").then(
           function () {
-            // console.log("Repeat is on off.");
+            console.log("Repeat is on off.");
           },
           function (err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -352,7 +355,7 @@ const Dashboard = ({ code }) => {
         // Toggle Repeat For User’s Playback
         spotifyApi.setRepeat("context").then(
           function () {
-            // console.log("Repeat is on context.");
+            console.log("Repeat is on context.");
           },
           function (err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -363,7 +366,7 @@ const Dashboard = ({ code }) => {
         // Toggle Repeat For User’s Playback
         spotifyApi.setRepeat("track").then(
           function () {
-            // console.log("Repeat is on track.");
+            console.log("Repeat is on track.");
           },
           function (err) {
             //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -430,7 +433,7 @@ const Dashboard = ({ code }) => {
           spotifyApi.seek(0).then(
             function () {
               setSliderPosition(0)
-              //console.log('Seek to ' + currentPosition.position_ms);
+              // console.log('Seek to ' + currentPosition.position_ms);
             },
             function (err) {
               //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -442,7 +445,7 @@ const Dashboard = ({ code }) => {
           // Skip User’s Playback To Previous Track
           spotifyApi.skipToPrevious().then(
             function () {
-              //console.log('Skip to previous');
+              // console.log('Skip to previous');
             },
             function (err) {
               //if the user making the request is non-premium, a 403 FORBIDDEN response code will be returned
@@ -562,9 +565,10 @@ const Dashboard = ({ code }) => {
 
   function clickSong(event, song) {
     if (nowPlaying.name !== event.target.getAttribute("alt")) {
-      setSongClickedCounter(songClickedCounter + 1)
+      setSongClickedCounter(songClickedCounter + 1);
       setCurrentTrackPosition(song.position);
       setCurrentTrack(song.name);
+      setCurrentArtist(song.artist);
       setCurrentTrackURI(song.link);
     }
   }
@@ -626,7 +630,7 @@ const Dashboard = ({ code }) => {
 
 
   return (
-    <div>
+    <div style={{width: "100%"}}>
       <div
         style={{
           display: !loading && nowPlaying.image ? "block" : "none",
@@ -636,7 +640,7 @@ const Dashboard = ({ code }) => {
         className={classes.body}>
         {nowPlaying.image && <div>
           <div
-            style={{ height: "100%" }}
+            style={{ height: "100%", width: "100%" }}
             className={classes.bubbles}
           >
             <MyBubbles particlesOn={particlesOn} />
@@ -719,10 +723,16 @@ const Dashboard = ({ code }) => {
             display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
             width: '100px', height: '100px', position: 'fixed', right: '0%', top: '7%'
           }}>
-            <FormControlLabel control={<Switch onChange={handleSwitch} />} label="" />
+            <Tooltip
+              title={switchOn ? 'Disable Live Session' : 'Enable Live Session'}
+              arrow>
+              <FormControlLabel control={<Switch onChange={handleSwitch} />} label="" />
+          </Tooltip>
+            
           </div>
           {switchOn && <ChatRoom userInfo={userInfo} playDBTrack={playDBTrack}
-            sliderPosition={sliderPosition} currentTrack={currentTrack} currentTrackURI={currentTrackURI} />}
+            sliderPosition={sliderPosition} currentTrack={currentTrack} currentArtist={currentArtist}
+            currentTrackURI={currentTrackURI} />}
           {/* <Marquee style={{ "width": "50%", "margin": "auto" }} gradient={false} speed={40}> */}
           <div style={{ textAlign: 'center', padding: '2em', width: "50%", margin: "auto", color: "white", fontSize: "3em" }}>
             My Playlists

@@ -1,5 +1,5 @@
 import React from "react";
-import "./assets/App.css";
+// import "./assets/App.css";
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
@@ -8,7 +8,7 @@ const code = new URLSearchParams(window.location.search).get('code')
 
 function App() {
   return (
-    <div className="app">
+    <div>
       {code ? <Dashboard code={code} /> : <Login />}
     </div>
   );

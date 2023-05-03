@@ -5,13 +5,6 @@ import {
     onSnapshot, collection, query, getDocs, doc, updateDoc, arrayUnion,
     arrayRemove, addDoc, serverTimestamp, orderBy, limit
 } from "firebase/firestore";
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-
 
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -19,6 +12,13 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import GroupsIcon from '@mui/icons-material/Groups';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import SendIcon from '@mui/icons-material/Send';
+import Typography from '@mui/material/Typography';
+import Input from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+
+import Marquee from "react-fast-marquee";
 
 import redAmogus from '../../assets/red amogus.gif';
 import blueAmogus from '../../assets/blue amogus.gif';
@@ -34,25 +34,14 @@ import blackAmogus from '../../assets/black amogus.gif';
 import susAmogus from '../../assets/red amogus2.gif';
 
 export default function ChatRoom({ userInfo, playDBTrack,
-    sliderPosition, currentTrack, currentTrackURI }) {
+    sliderPosition, currentTrack, currentArtist, currentTrackURI }) {
 
-    const [open, setOpen] = useState(false);
-    const [scroll, setScroll] = useState('paper');
     const [playFromDB, setPlayFromDB] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [chatMessages, setChatMessages] = useState([]);
     const [groupSessionNames, setGroupSessionNames] = useState([]);
     const { name, profile_pic } = userInfo;
-
-    const handleModalOpen = (scrollType) => () => {
-        setOpen(true);
-        setScroll(scrollType);
-    };
-
-    const handleModalClose = () => {
-        setOpen(false);
-    };
 
     const handleDrawerOpen = () => {
         setDrawerOpen(true);
@@ -61,16 +50,6 @@ export default function ChatRoom({ userInfo, playDBTrack,
     const handleDrawerClose = () => {
         setDrawerOpen(false);
     };
-
-    const descriptionElementRef = useRef(null);
-    useEffect(() => {
-        if (open) {
-            const { current: descriptionElement } = descriptionElementRef;
-            if (descriptionElement !== null) {
-                descriptionElement.focus();
-            }
-        }
-    }, [open]);
 
     useEffect(() => {
         updateGroupSession('add');
@@ -132,9 +111,6 @@ export default function ChatRoom({ userInfo, playDBTrack,
         setGroupSessionNames(names[0].people)
     }
     async function updateGroupSession(choice) {
-        // play from db must be false
-        // console.log('trying to update message')
-
         try {
             if (choice === 'add') {
                 const docRef = doc(db, "people", "lY4KY2dHXpTFEqsq3qFD");
@@ -154,13 +130,12 @@ export default function ChatRoom({ userInfo, playDBTrack,
                     people: arrayRemove(name)
                 })
                     .then(docRef => {
-                        console.log('updated group session')
+                        // console.log('updated group session')
                     })
                     .catch(error => {
                         console.log(error);
                     })
             }
-
         }
         catch (err) {
             console.error("Failed to update", err)
@@ -182,8 +157,6 @@ export default function ChatRoom({ userInfo, playDBTrack,
             setMessages(messages)
         }
         async function updateMessage() {
-            // play from db must be false
-            // console.log('trying to update message')
             if (!playFromDB) {
                 try {
                     const docRef = doc(db, "messages", "SUVsFfpAP2Vz4gi0UyJG");
@@ -191,6 +164,7 @@ export default function ChatRoom({ userInfo, playDBTrack,
                         name: name,
                         photoURL: profile_pic,
                         text: currentTrack,
+                        artist: currentArtist,
                         time: sliderPosition,
                         URI: currentTrackURI,
                     })
@@ -271,6 +245,9 @@ export default function ChatRoom({ userInfo, playDBTrack,
             case 11:
                 icon = susAmogus;
                 break;
+            default:
+                icon = susAmogus;
+                break;
         }
         return icon;
     }
@@ -280,14 +257,11 @@ export default function ChatRoom({ userInfo, playDBTrack,
     // set to true, play from db
     // false from update overwrites true from earlier
 
-
     // # 2
     // initial false
     // listen from db -> set to true, play db track
     // cannot update message
     // set to false
-
-
 
     return (
 
@@ -295,81 +269,92 @@ export default function ChatRoom({ userInfo, playDBTrack,
             display: 'flex', justifyContent: 'center',
             alignContent: 'center', backgroundColor: 'black'
         }}>
-            <div style={{ padding: '1em' }}>
-                <Button sx={{ fontSize: '1.5em', color: 'white' }}
-                    onClick={handleModalOpen('body')}>
-                    Music Queue
-                </Button>
-
-                <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: '100px', height: '100px', position: 'fixed', right: '1%', top: '0%'
-                }}>
+            <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '100px', height: '100px', position: 'fixed', right: '1%', top: '0%'
+            }}>
+                <Tooltip
+                    title={'Chat'} 
+                    placement="left"
+                    arrow>
                     <IconButton>
                         <GroupsIcon
                             sx={{ color: 'blue' }}
                             onClick={handleDrawerOpen}>Open</GroupsIcon>
                     </IconButton>
-                </div>
-                <Drawer
-                    anchor='bottom'
-                    open={drawerOpen}
-                    // onClick={handleDrawerClose}
-                    onClose={handleDrawerClose}
-                    PaperProps={{ sx: { height: 440, backgroundColor: 'transparent' } }}
-                >
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {groupSessionNames && groupSessionNames.map((people, idx) => (
-                            <Tooltip key={idx} title={people}>
-                                <IconButton>
-                                    <Avatar alt={susAmogus} src={randomizeIcons(idx)} sx={{ width: 64, height: 64 }} />
-                                </IconButton>
-                            </Tooltip>
-                        ))}
-                    </Box>
-                    <div style={{ height: '10px' }} />
-                    <Box sx={{ height: '10%', width: '100%', position: 'relative' }}>
-                        <form onSubmit={sendChatMessage} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <input value={formValue} onChange={(e) => setFormValue(e.target.value)} />
-                            <button type='submit'>submit</button>
-                        </form>
-                        <div style={{ height: '20px' }} />
-                        {chatMessages && chatMessages.map((message, idx) => (
-                            <ChatMessage sx={{}}
-                                key={idx} message={message} name={name} photoURL={profile_pic} />
-                        ))}
-                    </Box>
-
-                </Drawer>
+                </Tooltip>
+                
             </div>
-            <Dialog
-                transitionDuration={300}
-                open={open}
-                onClose={handleModalClose}
-                scroll={scroll}
-                aria-labelledby="scroll-dialog-title"
-                aria-describedby="scroll-dialog-description"
-            >
-                <DialogTitle id="scroll-dialog-title"></DialogTitle>
-                <DialogContent dividers={scroll === 'paper'}>
-                    <DialogContentText
-                        id="scroll-dialog-description"
-                        ref={descriptionElementRef}
-                        tabIndex={-1}
-                        component={'span'}
-                    >
-                        <div>
-                            {messages && messages.map((message, idx) => (
-                                <ChatMessage sx={{}} key={idx} message={message} />
-                            ))}
-                        </div>
-
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleModalClose}>Close</Button>
-                </DialogActions>
-            </Dialog>
+            <Drawer
+                anchor='right'
+                variant="persistent"
+                open={drawerOpen}
+                onClose={handleDrawerClose}
+                PaperProps={{ sx: { width: '30%', backgroundColor: 'black' } 
+            }}>
+                <IconButton sx={{ width: '50px', margin: '0.5em 0 0 0.5em' }} onClick={handleDrawerClose}>
+                    <ChevronRightIcon sx={{ color: 'white' }}/>
+                </IconButton>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {groupSessionNames && groupSessionNames.map((people, idx) => (
+                        <Tooltip key={idx} title={people}>
+                            <IconButton>
+                                <Avatar alt={susAmogus} src={randomizeIcons(idx)} sx={{ width: 64, height: 64 }} />
+                            </IconButton>
+                        </Tooltip>
+                    ))}
+                </Box>
+                <Box sx={{ height: '500px', width: '100%',
+                    // backgroundColor: 'black',
+                    // border: 1,
+                    // borderColor: 'white',
+                    // borderRadius: '16px',
+                    marginTop: '50px',
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
+                    overflowY: "scroll"}}>
+                    {chatMessages && chatMessages.map((message, idx) => (
+                        <ChatMessage key={idx} message={message} name={name} photoURL={profile_pic} />
+                    ))}
+                </Box>
+                <Box sx={{ marginTop: '10px', height: '50px', width: '100%'}}>
+                    <form onSubmit={sendChatMessage} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Input
+                            value={formValue}
+                            placeholder='Type a message...'
+                            onChange={(e) => setFormValue(e.target.value)}
+                            sx={{ padding: '0.5em', backgroundColor: 'white', width: '70%', borderRadius: '16px' }}
+                            endAdornment={
+                                <InputAdornment>
+                                    <IconButton onClick={sendChatMessage}>
+                                        <SendIcon sx={{ color: 'black' }} />
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
+                    </form>
+                </Box>
+                <Box sx={{ marginTop: '3em', height: '50px', width: '100%'}}>
+                    {messages && messages.map((message) => (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Avatar alt={'photo'} src={message.photoURL} sx={{ width: 30, height: 30 }} />
+                            <Typography sx={{ textAlign: 'center', marginLeft: '0.5em',  fontWeight: "bold", fontSize: "1em", color: "white" }}>
+                                {message.name} is playing:
+                            </Typography>
+                        </div >
+                    ))}
+                </Box>
+                <Box sx={{ height: '50px', width: '100%' }}>
+                    <Marquee gradient={false} speed={40}>
+                        {messages && messages.map((message, idx) => (
+                            <Typography key={idx} sx={{ textAlign: 'center', fontWeight: "bold", fontSize: "1.5em", color: "white" }}>
+                               {message.artist} - {message.text}
+                            </Typography>
+                        ))}
+                    </Marquee>
+                </Box>
+            </Drawer>
         </div>
     )
 }

@@ -4,7 +4,7 @@ import Particles from 'react-particles-js';
 export default function MyBubbles(props) {
     return (
         <div>
-            {props.particlesOn && <div style={{ height: "100vh", width: "100%"}}>
+            {props.particlesOn && <div style={{ height: "100vh", width: "100vw"}}>
                 <Particles
                     style={{
                         minHeight: "800px",
