@@ -61,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
   trackInfoContainer: {
     margin: "auto",
     "@media (max-width:480px)": {
-
       width: "90%",
       fontSize: "0.7em",
       paddingTop: 50,

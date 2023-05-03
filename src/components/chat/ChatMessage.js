@@ -9,9 +9,9 @@ const commonStyles = {
     borderColor: 'text.primary',
     m: 1,
     border: 3,
-    width: 'auto',
+    width: '65%',
     height: 'auto',
-    padding: '1em',
+    padding: '0.8em',
     textAlign: 'center'
 };
 
@@ -24,10 +24,10 @@ export default function ChatMessage({ message }) {
 
     return (
         <div style={{ width: '100%' }}>
+            <Typography sx={{ textAlign: 'center', marginLeft: '32px', fontWeight: "bold", fontSize: "0.9em", color: "white" }}>{name}</Typography>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Avatar alt={name} src={photoURL} sx={{ width: 32, height: 32 }} />
-                <div>
-                    <Typography sx={{ textAlign: 'center', fontWeight: "bold", fontSize: "0.9em", color: "white" }}>{name}</Typography>
+                    
                     <Box sx={{ ...commonStyles, borderRadius: '16px' }} >
                         <Tooltip
                             PopperProps={{
@@ -39,7 +39,6 @@ export default function ChatMessage({ message }) {
                             <Typography sx={{ fontSize: "1em"}}>{text}</Typography>
                         </Tooltip>
                     </Box>
-                </div>
             </div>
         </div>
     )

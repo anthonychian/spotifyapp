@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import ChatMessage from './ChatMessage';
 import { db } from '../../firebase';
 import {
@@ -117,7 +117,7 @@ export default function ChatRoom({ userInfo, playDBTrack,
                 updateDoc(docRef, {
                     people: arrayUnion(name)
                 })
-                    .then(docRef => {
+                    .then(() => {
                         // console.log('updated group session')
                     })
                     .catch(error => {
@@ -129,7 +129,7 @@ export default function ChatRoom({ userInfo, playDBTrack,
                 updateDoc(docRef, {
                     people: arrayRemove(name)
                 })
-                    .then(docRef => {
+                    .then(() => {
                         // console.log('updated group session')
                     })
                     .catch(error => {
@@ -168,7 +168,7 @@ export default function ChatRoom({ userInfo, playDBTrack,
                         time: sliderPosition,
                         URI: currentTrackURI,
                     })
-                        .then(docRef => {
+                        .then(() => {
                             // console.log('update message')
                             setPlayFromDB(false)
                         })
@@ -190,16 +190,16 @@ export default function ChatRoom({ userInfo, playDBTrack,
     const sendChatMessage = async (e) => {
         e.preventDefault();
         try {
-            const docRef = await addDoc(collection(db, "chat"), {
+            await addDoc(collection(db, "chat"), {
                 text: formValue,
                 name: name,
                 photoURL: profile_pic,
                 createdAt: serverTimestamp()
             })
-                .then(docRef => {
-                    setFormValue("");
-                    getChatMessages();
-                })
+            .then(() => {
+                setFormValue("");
+                getChatMessages();
+            })
         } catch (err) {
             console.error("writeToDB failed. reason :", err)
         }
@@ -290,8 +290,21 @@ export default function ChatRoom({ userInfo, playDBTrack,
                 variant="persistent"
                 open={drawerOpen}
                 onClose={handleDrawerClose}
-                PaperProps={{ sx: { width: '30%', backgroundColor: 'black' } 
-            }}>
+                PaperProps={{ 
+                    sx: {
+                        backgroundColor: 'black',
+                        "@media (max-width:480px)": {
+                            width: '100%',
+                        },
+                        "@media (min-width:480px)": {
+                            width: "100%",
+                        },
+                        "@media (min-width:1282px)": {
+                            width: '33%',
+                        },
+                        
+                    } 
+                }}>
                 <IconButton sx={{ width: '50px', margin: '0.5em 0 0 0.5em' }} onClick={handleDrawerClose}>
                     <ChevronRightIcon sx={{ color: 'white' }}/>
                 </IconButton>
