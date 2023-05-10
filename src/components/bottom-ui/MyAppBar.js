@@ -6,6 +6,11 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import IconButton from '@mui/material/IconButton';
+import GroupsIcon from '@mui/icons-material/Groups';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -43,6 +48,12 @@ const useStyles = makeStyles((theme) => ({
     ['@media (max-width:480px)']: { // eslint-disable-line no-useless-computed-key
       height: '17%',
     }
+  },
+  groupIconStyle: {
+    position: 'absolute', height: '50px',
+    
+    ['@media (min-width:1000px)']: { right: '2%',}, // eslint-disable-line no-useless-computed-key
+    width: '50px', cursor: 'pointer', marginLeft: 'auto',
   },
 }));
 
@@ -101,14 +112,39 @@ export default function MyAppBar(props) {
           </div>
         </div>
 
+        <div style={{ position: 'absolute', height: '50px', right: '10%', width: '50px', marginLeft: 'auto' }}>
+          {props.switchOn ?
+            <Tooltip
+              title={'Chat'} 
+              placement="left"
+              arrow>
+                <IconButton>
+                    <GroupsIcon
+                        sx={{ color: 'blue' }}
+                        onClick={props.handleDrawerOpen}>Open</GroupsIcon>
+                </IconButton>
+            </Tooltip> :
+            <IconButton disabled={true}>
+              <GroupsIcon sx={{ color: 'white' }}>Open</GroupsIcon>
+            </IconButton>
+          }
+        </div>
 
-        <div
+        <div className={classes.groupIconStyle}>
+          <Tooltip
+            title={props.switchOn ? 'Disable Live Session' : 'Enable Live Session'}
+            arrow>
+            <FormControlLabel control={<Switch onChange={props.handleSwitch} />} label="" />
+          </Tooltip>
+        </div>
+
+        {/* <div
           style={{ position: 'absolute', height: '50px', right: '2%', width: '50px', cursor: 'pointer', marginLeft: 'auto' }}
           onClick={props.clickScrollUp}>
           <div style={{ position: 'absolute', paddingLeft: '50%', top: '40%' }}>
             <KeyboardArrowUpIcon />
           </div>
-        </div>
+        </div> */}
       </Toolbar>
     </AppBar>
   )

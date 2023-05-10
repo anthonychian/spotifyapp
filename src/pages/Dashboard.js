@@ -14,11 +14,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import Stack from "@mui/material/Stack";
 import CircularProgress from "@mui/material/CircularProgress";
 import Marquee from "react-fast-marquee";
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import IconButton from '@mui/material/IconButton';
-import GroupsIcon from '@mui/icons-material/Groups';
-import Tooltip from '@mui/material/Tooltip';
+// import FormControlLabel from '@mui/material/FormControlLabel';
+// import Switch from '@mui/material/Switch';
+// import Tooltip from '@mui/material/Tooltip';
+// import IconButton from '@mui/material/IconButton';
+// import GroupsIcon from '@mui/icons-material/Groups';
 
 import { getLyrics } from 'genius-lyrics-api';
 import useAuth from "../useAuth";
@@ -129,6 +129,8 @@ const Dashboard = ({ code }) => {
     clicked: false
   });
   const [switchOn, setSwitchOn] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
 
   const accessToken = useAuth(code);
   spotifyApi.setAccessToken(accessToken);
@@ -627,6 +629,15 @@ const Dashboard = ({ code }) => {
     setSwitchOn(!switchOn);
   };
 
+  const handleDrawerOpen = () => {
+    setDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+      setDrawerOpen(false);
+  };
+
+
 
   return (
     <div style={{width: "100%"}}>
@@ -666,6 +677,9 @@ const Dashboard = ({ code }) => {
             currentTrack={currentTrack}
             sliderPosition={sliderPosition}
             setSliderPosition={setSliderPosition}
+            switchOn={switchOn}
+            handleSwitch={handleSwitch}
+            handleDrawerOpen={handleDrawerOpen}
           />
 
           <Marquee
@@ -704,34 +718,17 @@ const Dashboard = ({ code }) => {
           style={{
             display: loading ? "none" : "block",
           }}
-        >   <div className={classes.avatar2}>
+        >   
+          <div className={classes.avatar2}>
             <div style={{ marginTop: '5em' }}></div>
             <AccountMenu name={userInfo.name} src={userInfo.profile_pic}
               particlesOn={particlesOn} setParticlesOn={setParticlesOn}
             />
           </div>
-          {!switchOn && <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: '100px', height: '100px', position: 'fixed', right: '1%', top: '0%'
-          }}>
-            <IconButton disabled={true}>
-              <GroupsIcon sx={{ color: 'white' }}>Open</GroupsIcon>
-            </IconButton>
-          </div>}
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
-            width: '100px', height: '100px', position: 'fixed', right: '0%', top: '7%'
-          }}>
-            <Tooltip
-              title={switchOn ? 'Disable Live Session' : 'Enable Live Session'}
-              arrow>
-              <FormControlLabel control={<Switch onChange={handleSwitch} />} label="" />
-          </Tooltip>
-            
-          </div>
+
           {switchOn && <ChatRoom userInfo={userInfo} playDBTrack={playDBTrack}
             sliderPosition={sliderPosition} currentTrack={currentTrack} currentArtist={currentArtist}
-            currentTrackURI={currentTrackURI} />}
+            currentTrackURI={currentTrackURI} handleDrawerClose={handleDrawerClose} drawerOpen={drawerOpen} coverImage={nowPlaying.imageLow} />}
           {/* <Marquee style={{ "width": "50%", "margin": "auto" }} gradient={false} speed={40}> */}
           <div style={{ textAlign: 'center', padding: '2em', width: "50%", margin: "auto", color: "white", fontSize: "3em" }}>
             My Playlists

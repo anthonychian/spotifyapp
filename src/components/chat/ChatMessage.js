@@ -9,7 +9,7 @@ const commonStyles = {
     borderColor: 'text.primary',
     m: 1,
     border: 3,
-    width: '65%',
+    width: '50%',
     height: 'auto',
     padding: '0.8em',
     textAlign: 'center'
@@ -33,10 +33,17 @@ export default function ChatMessage({ message }) {
                             PopperProps={{
                                 modifiers: [{name: "offset", options: {offset: [0, 15]}}]
                             }}
-                            title={date?.toDate().toLocaleString('en-US', { weekday: "short", hour: "numeric", minute: "numeric", timeZone: 'PST' })} 
+                            title={date.toDate().toLocaleString('en-US', { weekday: "short", hour: "numeric", minute: "numeric", timeZone: 'PST'})} 
                             placement="right"
                             arrow>
-                            <Typography sx={{ fontSize: "1em"}}>{text}</Typography>
+                            <Typography 
+                                sx={{ 
+                                    inlineSize: 'auto', 
+                                    overflowWrap: 'break-word',
+                                    fontSize: "1em"
+                                }}>
+                                    {text}
+                            </Typography>
                         </Tooltip>
                     </Box>
             </div>

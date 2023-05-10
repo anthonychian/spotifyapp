@@ -11,8 +11,7 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import GroupsIcon from '@mui/icons-material/Groups';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
@@ -33,23 +32,18 @@ import brownAmogus from '../../assets/brown amogus.gif';
 import blackAmogus from '../../assets/black amogus.gif';
 import susAmogus from '../../assets/red amogus2.gif';
 
-export default function ChatRoom({ userInfo, playDBTrack,
-    sliderPosition, currentTrack, currentArtist, currentTrackURI }) {
+export default function ChatRoom({ userInfo, playDBTrack, sliderPosition, currentTrack, 
+    currentArtist, currentTrackURI, handleDrawerClose, drawerOpen, coverImage}) {
 
     const [playFromDB, setPlayFromDB] = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [chatMessages, setChatMessages] = useState([]);
     const [groupSessionNames, setGroupSessionNames] = useState([]);
     const { name, profile_pic } = userInfo;
 
-    const handleDrawerOpen = () => {
-        setDrawerOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setDrawerOpen(false);
-    };
+    // useEffect(() => {
+    //     return () => (updateGroupSession('remove'))
+    // });
 
     useEffect(() => {
         updateGroupSession('add');
@@ -99,7 +93,10 @@ export default function ChatRoom({ userInfo, playDBTrack,
         querySnapshot.forEach((doc) => {
             messages.push(doc.data())
         });
-        setChatMessages(messages)
+        let messagesReversed = messages.reverse()
+        setChatMessages(messagesReversed)
+        let objDiv = document.getElementById("chatBox");
+        objDiv.scrollTop = objDiv.scrollHeight;
     }
     async function getGroupSession() {
         const q = query(collection(db, "people"));
@@ -165,6 +162,7 @@ export default function ChatRoom({ userInfo, playDBTrack,
                         photoURL: profile_pic,
                         text: currentTrack,
                         artist: currentArtist,
+                        coverURL: coverImage,
                         time: sliderPosition,
                         URI: currentTrackURI,
                     })
@@ -269,22 +267,11 @@ export default function ChatRoom({ userInfo, playDBTrack,
             display: 'flex', justifyContent: 'center',
             alignContent: 'center', backgroundColor: 'black'
         }}>
-            <div style={{
+            {/* <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 width: '100px', height: '100px', position: 'fixed', right: '1%', top: '0%'
-            }}>
-                <Tooltip
-                    title={'Chat'} 
-                    placement="left"
-                    arrow>
-                    <IconButton>
-                        <GroupsIcon
-                            sx={{ color: 'blue' }}
-                            onClick={handleDrawerOpen}>Open</GroupsIcon>
-                    </IconButton>
-                </Tooltip>
-                
-            </div>
+            }}> */}
+            
             <Drawer
                 anchor='right'
                 variant="persistent"
@@ -306,7 +293,7 @@ export default function ChatRoom({ userInfo, playDBTrack,
                     } 
                 }}>
                 <IconButton sx={{ width: '50px', margin: '0.5em 0 0 0.5em' }} onClick={handleDrawerClose}>
-                    <ChevronRightIcon sx={{ color: 'white' }}/>
+                    <CloseIcon sx={{ color: 'white' }}/>
                 </IconButton>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {groupSessionNames && groupSessionNames.map((people, idx) => (
@@ -317,21 +304,18 @@ export default function ChatRoom({ userInfo, playDBTrack,
                         </Tooltip>
                     ))}
                 </Box>
-                <Box sx={{ height: '500px', width: '100%',
-                    // backgroundColor: 'black',
-                    // border: 1,
-                    // borderColor: 'white',
-                    // borderRadius: '16px',
+                <Box sx={{ height: '50%', width: '100%',
                     marginTop: '50px',
                     display: "flex",
                     flexDirection: "column",
                     overflow: "hidden",
-                    overflowY: "scroll"}}>
+                    overflowY: "scroll"}}
+                    id="chatBox">
                     {chatMessages && chatMessages.map((message, idx) => (
                         <ChatMessage key={idx} message={message} name={name} photoURL={profile_pic} />
                     ))}
                 </Box>
-                <Box sx={{ marginTop: '10px', height: '50px', width: '100%'}}>
+                <Box sx={{ padding: 'auto', marginTop: '10px', height: '50px', width: '100%'}}>
                     <form onSubmit={sendChatMessage} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Input
                             value={formValue}
@@ -359,12 +343,15 @@ export default function ChatRoom({ userInfo, playDBTrack,
                     ))}
                 </Box>
                 <Box sx={{ height: '50px', width: '100%' }}>
-                    <Marquee gradient={false} speed={40}>
-                        {messages && messages.map((message, idx) => (
-                            <Typography key={idx} sx={{ textAlign: 'center', fontWeight: "bold", fontSize: "1.5em", color: "white" }}>
-                               {message.artist} - {message.text}
-                            </Typography>
-                        ))}
+                    <Marquee style={{ "width": "70%", margin: 'auto', padding: 'auto'}} gradient={false} speed={40}>
+                        {messages[0] &&
+                            <>
+                                <img style={{padding: '0 10px 0 50px'}}alt={messages[0].text} src={coverImage} />
+                                <Typography sx={{ textAlign: 'center', fontWeight: "bold", fontSize: "1.5em", color: "white" }}>
+                                    {messages[0].artist} - {messages[0].text}
+                                </Typography>
+                            </>
+                        }
                     </Marquee>
                 </Box>
             </Drawer>
